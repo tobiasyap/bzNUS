@@ -1,0 +1,25 @@
+{
+  "name": "bznus",
+  "version": "1.0.0",
+  "description": "NUS project manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielchao/bzNUS.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "bzNUS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrielchao/bzNUS/issues"
+  },
+  "homepage": "https://github.com/gabrielchao/bzNUS#readme",
+  "dependencies": {
+    "create-react-app": "^3.0.1"
+  }
+}
