@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const scrape = require('./scrape');
 
 const ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 5000;
@@ -12,6 +13,17 @@ app.use(bodyParser.json());
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
+});
+
+app.get('/api/nusmods/:url', async (req, res, next) => {
+    const timetableurl = await scrape(req.params.url);
+    console.log(timetableurl);
+    if(!timetableurl) {
+        res.status(404).send(`The url '${req.params.url}' is not valid.`);
+    }
+    else {
+        res.send(timetableurl);
+    }
 });
 
 module.exports = app;
