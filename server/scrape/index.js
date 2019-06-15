@@ -1,13 +1,16 @@
-const puppeteer = require('puppeteer');
+const request = require('request-promise');
 const qs = require('query-string');
 
 async function scrape(shareurl) {
     console.log(`Received url ${shareurl}`);
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(shareurl);
-    await browser.close();
-    return qs.parseUrl(page.url()).query;
+    const options = {
+        url: shareurl,
+        transform: (body, response) => {
+            return response;
+        }
+    };
+    const response = await request(options);
+    return qs.parse(response.request.uri.query);
 }
 
 module.exports = scrape;

@@ -16,13 +16,13 @@ app.listen(PORT, () => {
 });
 
 app.get('/api/nusmods/:url', async (req, res, next) => {
-    const timetableurl = await scrape(req.params.url);
-    console.log(timetableurl);
-    if(!timetableurl) {
+    const timetable = await scrape(req.params.url);
+    console.log(timetable);
+    if(!timetable) {
         res.status(404).send(`The url '${req.params.url}' is not valid.`);
     }
     else {
-        res.send(timetableurl);
+        res.send(timetable);
     }
 });
 
