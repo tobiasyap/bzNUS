@@ -1,7 +1,9 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+
 const scrape = require('./scrape');
+const utils = require('../utils/timetable');
 
 const ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 5000;
@@ -16,7 +18,8 @@ app.listen(PORT, () => {
 });
 
 app.get('/api/nusmods/:url', async (req, res, next) => {
-    const timetable = await scrape(req.params.url);
+    const serializedTimetable = await scrape(req.params.url);
+    const timetable = utils.deserializeTimetable(serializedTimetable);
     console.log(timetable);
     if(!timetable) {
         res.status(404).send(`The url '${req.params.url}' is not valid.`);

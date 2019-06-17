@@ -1,7 +1,6 @@
 const request = require('request-promise');
-const qs = require('query-string');
 
-async function scrape(shareurl) {
+async function getSerializedTimetable(shareurl) {
     console.log(`Received url ${shareurl}`);
     const options = {
         url: shareurl,
@@ -10,7 +9,8 @@ async function scrape(shareurl) {
         }
     };
     const response = await request(options);
-    return qs.parse(response.request.uri.query);
+    const serialized = response.request.uri.query;
+    return serialized;
 }
 
-module.exports = scrape;
+module.exports = getSerializedTimetable;
