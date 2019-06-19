@@ -60,14 +60,14 @@ function deserializeTimetable(serialized) {
 function decodeTimes(moduleData, semester, codedTimes) {
     const targetSem = moduleData.semesterData.find((s) => {
         return s.semester === semester;
-    })
+    });
     let decodedTimes = [];
     for(const classNo of Object.values(codedTimes)) {
         // get the set of classes for this classNo group
         // e.g. lecture group 1 may have two lecture slots per week to attend
         const classData = targetSem.timetable.filter((c) => {
             return c.classNo === classNo;
-        })
+        });
         for(data of classData) {
             decodedTimes.push(data);
         }
