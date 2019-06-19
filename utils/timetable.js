@@ -40,7 +40,6 @@ function parseModuleConfig(serialized) {
     Object.entries(serialized).forEach((serializedModule) => {
         const [moduleCode, serializedConfig] = serializedModule;
         config[moduleCode] = {};
-        console.log(serializedConfig);
         serializedConfig.split(LESSON_SEP).forEach((lesson) => {
             const [lessonTypeAbbr, classNo] = lesson.split(LESSON_TYPE_SEP);
             const lessonType = LESSON_ABBREV_TYPE[lessonTypeAbbr];
@@ -58,4 +57,23 @@ function deserializeTimetable(serialized) {
     return parseModuleConfig(timetable);
 }
 
+function decodeTimes(moduleData, semester, codedTimes) {
+    const targetSem = moduleData.semesterData.find((s) => {
+        return s.semester === semester;
+    })
+    let decodedTimes = [];
+    for(const classNo of Object.values(codedTimes)) {
+        // get the set of classes for this classNo group
+        // e.g. lecture group 1 may have two lecture slots per week to attend
+        const classData = targetSem.timetable.filter((c) => {
+            return c.classNo === classNo;
+        })
+        for(data of classData) {
+            decodedTimes.push(data);
+        }
+    }
+    return decodedTimes;
+}
+
 module.exports.deserializeTimetable = deserializeTimetable;
+module.exports.decodeTimes = decodeTimes;
