@@ -1,3 +1,7 @@
+/**
+ * Module with database functions for interacting with Timetable objects.
+ */
+
 const db = require('../database');
 
 function getTimetable(timetableurl) {

@@ -1,3 +1,7 @@
+/**
+ * Module for connecting to and returning the PostgreSQL database.
+ */
+
 const pgp = require('pg-promise')({});
 
 // Database connection details

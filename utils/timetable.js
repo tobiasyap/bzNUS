@@ -1,5 +1,7 @@
 /*
-    This file is adapted from nusmodifications/nusmods/website/src/utils/timetables.ts
+    Module containing utilities for working with timetables in various formats.
+    Parts of this file are adapted from 
+    https://github.com/nusmodifications/nusmods/blob/42222559f411cdd7b3e0e157943435313202a7ea/website/src/utils/timetables.ts
 */
 
 const qs = require('query-string');
@@ -33,6 +35,13 @@ function invertObject(obj) {
     return ret;
 }
 
+/**
+ * Parses the given query string into an object containing classNos for each
+ * module in the timetable.
+ * @param {string} serialized - Serialized timetable in query string format.
+ * @returns {Object} - Object containing the timings for each module in the
+ *     timetable in classNo format.
+ */
 function parseModuleConfig(serialized) {
     const config = {};
     if(!serialized) return config;
@@ -52,11 +61,31 @@ function parseModuleConfig(serialized) {
     return config;
 }
 
+/**
+ * Converts the serialized timetable into an object containing timings for each
+ * module in classNo format.
+ * @param {string} serialized - Serialized timetable as a percent-encoded URL.
+ * @returns {Object} - Object containing the timings for each module in the
+ *     timetable in classNo format.
+ */
 function deserializeTimetable(serialized) {
+    // Extract the query string from the URL
     const timetable = qs.parse(serialized);
     return parseModuleConfig(timetable);
 }
 
+/**
+ * Returns an object containing the relevant class info for the given module.
+ * The given codedTimes must correspond to valid classNos in moduleData, and
+ * the module must be conducted in the given semester.
+ * @param {Object} moduleData - Full JSON object containing all info for the
+ *      desired object, obtained from the NUSMods API.
+ * @param {number} semester - Number indicating the desired semester.
+ * @param {Object} codedTimes - Object containing the timings for each module in 
+ *     the timetable in classNo format.
+ * @returns {Object} - An object with timings and other info about each 
+ *     class taken.
+ */
 function decodeTimes(moduleData, semester, codedTimes) {
     const targetSem = moduleData.semesterData.find((s) => {
         return s.semester === semester;

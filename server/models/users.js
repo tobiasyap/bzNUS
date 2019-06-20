@@ -1,3 +1,7 @@
+/**
+ * Module with database functions for interacting with User objects.
+ */
+
 const db = require('../database');
 
 function getUser(username) {
