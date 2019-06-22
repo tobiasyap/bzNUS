@@ -1,12 +1,15 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const passport = require('passport');
+const NusStrategy = require('passport-nus-openid').Strategy;
 
 const nusmods = require('./nusmods');
 const utils = require('../utils/timetable');
 const db = require('./database');
-const timetables = require('./models/timetables');
-const users = require('./models/users');
+const Timetable = require('./models/Timetable');
+const User = require('./models/User');
 
 const ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 5000;
@@ -20,9 +23,51 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}...`);
-});
+// Serve client files
+if(ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    app.use((req, res) => {
+        res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    });
+}
+
+// Configure express-session
+app.use(session({
+    secret: 'myveryimportsecret',
+    resave: false,
+    saveUninitialized: false
+}));
+
+passport.use(new NusStrategy({
+        returnURL: 'http://localhost:3000/auth/nus/return',
+        realm: 'http://localhost:3000/',
+        profile: true
+    },
+    async (identifier, done) => {
+        var user = null, err = null;
+        try {
+            user = await User.findByNusnetID(identifier);
+        }
+        catch(e) {
+            err = e;
+        }
+        done(err, user); 
+    }
+));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('/auth/nus', passport.authenticate('nus-openid'));
+
+app.get('/auth/nus/return',
+    passport.authenticate('nus-openid', { failureRedirect: '/login'}),
+    (req, res) => {
+        // TODO: sucessful authentication, redirect home.
+        // res.redirect('/');
+        res.send(`Authenticated successfully. Your session is:\n${req.session}`);
+    }
+);
 
 // Test connectivity to PostgreSQL database
 (async () => {
@@ -38,73 +83,10 @@ app.listen(PORT, () => {
     console.log(`PostgreSQL connected: ${time.now}`);
 })();
 
-app.get('/api/nusmods/:url', async (req, res, next) => {
-    const url = req.params.url;
-    console.log(`Received url ${url}`);
+app.use('/api/nusmods/', require('./routes/api/nusmods.js'));
 
-    // To reduce API calls to NUSMods, app will cache timetables in the database
-    // First check if timetable already exists in database
-    var timetable;
-    try {
-        timetable = await timetables.getTimetable(url);
-    }
-    catch {
-        console.log(`${url} does not exist in database.`);
-        timetable = null;
-    }
-    
-    if(timetable) {
-        // Timetable exists in app database.
-        console.log('URL exists in database.');
-    }
-    else { 
-        // Timetable does not exist in app database yet.
-        // Follow the short shareURL and extract the serialized timetable
-        // from the redirect URL's query
-        var serializedTimetable;
-        try {
-            serializedTimetable = await nusmods.getSerializedTimetable(url);
-        }
-        catch(err) {
-            res.status(404).send(`The url '${url}' is not valid.`);
-            console.error(err);
-            return;
-        }
-        console.log(`Serialized to ${serializedTimetable}`);
-        const codedTimetable = utils.deserializeTimetable(serializedTimetable);
-        if(!codedTimetable) {
-            res.status(404).send(`Error deserializing '${url}'`);
-            return;
-        }
-        
-        // Serialized timetable has been obtained, but it only contains module
-        // codes, not module info. Call NUSMods API to retrieve each module's info
-        timetable = {};
-        let promises = [];
-        for(const [moduleCode, codedTimes] of Object.entries(codedTimetable)) {
-            modPromise = nusmods.getModule(YEAR, moduleCode)
-                .then((moduleData) => { 
-                    timetable[moduleCode] = utils.decodeTimes(moduleData, SEMESTER, codedTimes);
-                });
-            promises.push(modPromise);
-        }
-        try {
-            await Promise.all(promises);
-        }
-        catch(err) {
-            res.status(404).send("Error fetching module data.");
-            console.error(err);
-            return;
-        }
-
-        // Insert timetable into app database so it can be retrieved 
-        // by future queries to this URL
-        timetables.insertTimetable(url, timetable);
-    }
-
-    // Finally, send the full timetable to the client
-    res.send(timetable);
-    console.log(timetable);
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}...`);
 });
 
 module.exports = app;
