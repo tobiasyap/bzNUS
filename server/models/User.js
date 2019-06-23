@@ -10,7 +10,7 @@ function findByUsername(username) {
 
 function findByNusnetID(nusnet_id) {
     const query = 'SELECT * FROM users WHERE username = (SELECT username FROM nusnet_id_username WHERE nusnet_id = $1)';
-    return db.one(query, nusnet_id);
+    return db.oneOrNone(query, nusnet_id);
 }
 
 module.exports = {

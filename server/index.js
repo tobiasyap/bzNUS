@@ -3,7 +3,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
-const NusStrategy = require('passport-nus-openid').Strategy;
 
 const nusmods = require('./nusmods');
 const utils = require('../utils/timetable');
@@ -24,7 +23,9 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // Serve client files
+var CLIENT_HOME_PAGE_URL = 'http://localhost:3000';
 if(ENV === 'production') {
+    CLIENT_HOME_PAGE_URL = '/';
     app.use(express.static(path.join(__dirname, '../client/build')));
     app.use((req, res) => {
         res.sendFile(path.join(__dirname, '../client/build/index.html'));
@@ -33,41 +34,61 @@ if(ENV === 'production') {
 
 // Configure express-session
 app.use(session({
-    secret: 'myveryimportsecret',
+    secret: 'myveryimportantsecret',
     resave: false,
     saveUninitialized: false
 }));
 
-passport.use(new NusStrategy({
-        returnURL: 'http://localhost:3000/auth/nus/return',
-        realm: 'http://localhost:3000/',
-        profile: true
-    },
-    async (identifier, done) => {
-        var user = null, err = null;
-        try {
-            user = await User.findByNusnetID(identifier);
-        }
-        catch(e) {
-            err = e;
-        }
-        done(err, user); 
-    }
-));
-
+// Passport config
+require('./config/passport-setup')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Set up authentication routes
 app.get('/auth/nus', passport.authenticate('nus-openid'));
 
+// Redirect to client homepage after sucessful authentication
 app.get('/auth/nus/return',
-    passport.authenticate('nus-openid', { failureRedirect: '/login'}),
-    (req, res) => {
-        // TODO: sucessful authentication, redirect home.
-        // res.redirect('/');
-        res.send(`Authenticated successfully. Your session is:\n${req.session}`);
-    }
+    passport.authenticate('nus-openid', {
+        successRedirect: CLIENT_HOME_PAGE_URL,
+        failureRedirect: '/auth/login/failed'
+    })
 );
+
+app.get('/auth/login/failed', (req, res) => {
+    res.status(401).json({
+        success: false,
+        message: 'user failed to authenticate'
+    });
+});
+
+// After logging out, redirect back to client
+app.get('/auth/logout', (req, res) => {
+    req.logout();
+    res.redirect(CLIENT_HOME_PAGE_URL);
+});
+
+// Specify middleware to check if a user has been authenticated
+const ensureAuthenticated = (req, res, next) => {
+    if(!req.user) {
+        res.status(401).json({
+            authenticated: false,
+            message: 'user has not been authenticated'
+        });
+    }
+    else {
+        next();
+    }
+};
+
+// Attach middleware to frontend
+app.get('/', ensureAuthenticated, (req, res) => {
+    res.status(200).json({
+        authenticated: true,
+        message: 'user successfully authenticated',
+        user: req.user,
+    });
+});
 
 // Test connectivity to PostgreSQL database
 (async () => {
