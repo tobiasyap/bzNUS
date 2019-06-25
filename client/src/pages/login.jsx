@@ -8,19 +8,15 @@ import {
   Col,
 } from 'reactstrap';
 
-//import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
 
     return (
-        <Container fluid className="Centered">
-            <Navbar dark color="dark">
-                <NavbarBrand href="/">bzNUS</NavbarBrand>
-            </Navbar>
-            <Row>
-                <Col>This is the login page</Col>
-            </Row>
-        </Container>
+        <div class="centralize-login">
+            <h1>bzNUS</h1>
+            <Link to="/">Login with NUSNET ID</Link>
+        </div>
     );
 };
 
