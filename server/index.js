@@ -105,6 +105,7 @@ app.get('/', ensureAuthenticated, (req, res) => {
 })();
 
 app.use('/api/nusmods/', require('./routes/api/nusmods.js'));
+app.use('/api/', require('./routes/api/api.js'));
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}...`);
