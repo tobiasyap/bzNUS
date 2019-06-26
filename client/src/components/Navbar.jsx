@@ -12,7 +12,7 @@ import {
   DropdownMenu,
   DropdownItem } from 'reactstrap';
 
-export default class Example extends React.Component {
+export default class NavBar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -20,13 +20,21 @@ export default class Example extends React.Component {
     this.state = {
       isOpen: false
     };
+
   }
   toggle() {
     this.setState({
       isOpen: !this.state.isOpen
     });
   }
+
   render() {
+    const { location } = this.props;
+
+    if (location.pathname.match('/login') || location.pathname.match('/404')){
+        return null;
+    }
+
     return (
       <div>
         <Navbar color="dark" dark expand="md">
@@ -48,6 +56,9 @@ export default class Example extends React.Component {
                   <DropdownItem>
                     The Best Project Group
                   </DropdownItem>
+                  <DropdownItem href="/group">
+                    Group Page Example
+                  </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem>
                     Create Group
@@ -66,7 +77,6 @@ export default class Example extends React.Component {
             </Nav>
           </Collapse>
         </Navbar>
-        <h1 class="centralize-login">Welcome to bzNUS! Create a group to start</h1>
       </div>
     );
   }

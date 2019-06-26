@@ -20,9 +20,6 @@ const NusModsPage = () => {
 
     return (
         <Container fluid className="Centered">
-            <Navbar dark color="dark">
-                <NavbarBrand href="/">bzNUS</NavbarBrand>
-            </Navbar>
             <Row>
                 <Col>Go to NUSMods, click on share/sync, copy link url, encode url</Col>
             </Row>

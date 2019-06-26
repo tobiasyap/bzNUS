@@ -14,20 +14,15 @@ const MainPage = () => {
 
     return (
         <div>
-            <Navbar color="dark" dark expand="md">
-                <NavbarBrand href="/">bzNUS</NavbarBrand>
-            </Navbar>
         <Container fluid className="Centered">
             <Row>
                 <Col>Welcome to bzNUS</Col>
             </Row>
             <Link to="/login">Login</Link>
             <div></div>
-            <Link to="/register">Register</Link>
-            <div></div>
             <Link to="/nusmods">Link to NUSMods</Link>
             <div></div>
-            <Link to="/example">Link to Example</Link>
+            <Link to="/home">Link to demo Home Page</Link>
         </Container>
         </div>
     );
