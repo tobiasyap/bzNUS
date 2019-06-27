@@ -15,7 +15,7 @@
 const db = require('../database');
 
 function findByUsername(username) {
-    return db.one('SELECT * FROM users WHERE username = $1', username)
+    return db.oneOrNone('SELECT * FROM users WHERE username = $1', username)
         .then((user) => {
             return new Promise(async (resolve, reject) => {
                 try {
@@ -35,9 +35,16 @@ function findByUsername(username) {
 
 function findByNusnetID(nusnet_id) {
     const query = 'SELECT * FROM users WHERE username = (SELECT username FROM nusnet_id_username WHERE nusnet_id = $1)';
-    return db.one(query, nusnet_id)
+    return db.oneOrNone(query, nusnet_id)
         .then((user) => {
             return new Promise(async (resolve, reject) => {
+                // If no user has been found, return null
+                if(!user) {
+                    resolve(user);
+                    return;
+                }
+
+                // Attach related data to user object
                 try {
                     const group_ids = await _getGroupIDs(user.username);
                     user.nusnet_id = nusnet_id;
@@ -45,6 +52,7 @@ function findByNusnetID(nusnet_id) {
                     resolve(user);
                 }
                 catch(err) {
+                    console.error(err);
                     console.error(`Error fetching user with NUSNET ID ${nusnet_id}`);
                     reject(err);
                 }

@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const passport = require('passport');
+const passport = require('@passport-next/passport');
 
 const nusmods = require('./nusmods');
 const utils = require('../utils/timetable');
@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // Serve client files
-var CLIENT_HOME_PAGE_URL = 'http://localhost:3000';
+var CLIENT_HOME_PAGE_URL = 'http://localhost:5000';
 if(ENV === 'production') {
     CLIENT_HOME_PAGE_URL = '/';
     app.use(express.static(path.join(__dirname, '../client/build')));
@@ -41,10 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Set up authentication routes
-app.get('/auth/nus', (req, res) => {
-    console.log("now authenticating");
-    passport.authenticate('nus-openid');
-});
+app.get('/auth/nus', passport.authenticate('nus-openid'));
 
 // Redirect to client homepage after sucessful authentication
 app.get('/auth/nus/return',
