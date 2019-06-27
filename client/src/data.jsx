@@ -1,0 +1,3 @@
+var data = {"GEH1063":[{"classNo":"1","startTime":"1600","endTime":"1800","weeks":[1,2,3,4,5,6,7,8,9,10,11,12,13],"venue":"MD9-01-02","day":"Thursday","lessonType":"Lecture","size":35},{"classNo":"1","startTime":"1400","endTime":"1800","weeks":[1,2,3,4,5,6,7,8,9,10,11,12,13],"venue":"","day":"Friday","lessonType":"Tutorial","size":35},{"classNo":"1","startTime":"1600","endTime":"1800","weeks":[1,2,3,4,5,6,7,8,9,10,11,12,13],"venue":"MD9-01-02","day":"Thursday","lessonType":"Lecture","size":35},{"classNo":"1","startTime":"1400","endTime":"1800","weeks":[1,2,3,4,5,6,7,8,9,10,11,12,13],"venue":"","day":"Friday","lessonType":"Tutorial","size":35}]}
+
+export default data;

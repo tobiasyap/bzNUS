@@ -12,6 +12,7 @@ import {
     Row, 
     Col } from 'reactstrap';
 import classnames from 'classnames';
+import Grid from './grid';
 
 export default class Tabs extends React.Component {
   constructor(props) {
@@ -94,6 +95,9 @@ export default class Tabs extends React.Component {
                 </Card>
               </Col>
             </Row>
+          </TabPane>
+          <TabPane tabId="3">
+            <Grid />
           </TabPane>
           <TabPane tabId="4">
             <Row>
