@@ -13,10 +13,6 @@ const User = require('./models/User');
 const ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 5000;
 
-// Testing variables
-const SEMESTER = 2;
-const YEAR = '2018-2019';
-
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
@@ -45,7 +41,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Set up authentication routes
-app.get('/auth/nus', passport.authenticate('nus-openid'));
+app.get('/auth/nus', (req, res) => {
+    console.log("now authenticating");
+    passport.authenticate('nus-openid');
+});
 
 // Redirect to client homepage after sucessful authentication
 app.get('/auth/nus/return',

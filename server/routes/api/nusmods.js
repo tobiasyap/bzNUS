@@ -4,6 +4,9 @@ const router = express.Router();
 const Timetable = require('../../models/Timetable');
 const nusmods = require('../../nusmods');
 const utils = require('../../../utils/timetable');
+const Global = require('../../config/Global');
+
+const { YEAR, SEMESTER } = Global;
 
 router.get('/:url', async (req, res, next) => {
     const url = req.params.url;
