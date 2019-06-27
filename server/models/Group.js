@@ -19,9 +19,9 @@ function findByGroupID(group_id) {
         .then((g) => {
             return new Promise(async (resolve, reject) => {
                 try {
-                    const usernames = await db.any('SELECT username FROM group_users WHERE group_id = $1', group_id);
+                    const user_ids = await db.any('SELECT user_id FROM group_users WHERE group_id = $1', group_id);
                     const todos = await db.any('SELECT * FROM todos WHERE todo_id = SELECT todo_id FROM group_todos WHERE group_id = $1', group_id);
-                    g.usernames = usernames;
+                    g.user_ids = user_ids;
                     g.todos = todos;
                     resolve(g);
                 }
@@ -36,25 +36,25 @@ function findByGroupID(group_id) {
 function insert(group) {
     return db.one(
         `SELECT * FROM projectgroups WHERE group_id = 
-            INSERT INTO group_users (group_id, username) 
+            INSERT INTO group_users (group_id, user_id) 
                 VALUES (INSERT INTO projectgroups (group_name) VALUES ($1) RETURNING group_id, $2)
                 RETURNING group_id;`, 
-        group.name, group.usernames[0]
+        group.name, group.user_ids[0]
     );
 }
 
-function insertUsername(group_id, username) {
+function insertUserID(group_id, user_id) {
     return db.one(
         `BEGIN;
-        INSERT INTO group_users (group_id, username) VALUES ($1, $2);
-        SELECT * FROM group_users WHERE group_id = $1 AND username = $2;
+        INSERT INTO group_users (group_id, user_id) VALUES ($1, $2);
+        SELECT * FROM group_users WHERE group_id = $1 AND user_id = $2;
         COMMIT;`,
-        group_id, username
+        group_id, user_id
     );
 }
 
 module.exports = {
     findByGroupID: findByGroupID,
     insert: insert,
-    insertUsername: insertUsername
+    insertUserID: insertUserID
 };

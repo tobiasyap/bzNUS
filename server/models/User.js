@@ -3,8 +3,9 @@
 
     If found, will return a User object with the following fields:
     {
-        nusnet: NUSNET ID 
-        username: unique display name primary key
+        user_id: integer primary key
+        nusnet_id: NUSNET ID 
+        username: unique display name
         fullname: full name given by NUSNet OpenID. Shouldn’t need to modify.
         email:
         timetableurl: the share URL input by the user
@@ -14,57 +15,48 @@
 
 const db = require('../database');
 
-function findByUsername(username) {
-    return db.oneOrNone('SELECT * FROM users WHERE username = $1', username)
-        .then((user) => {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const group_ids = await _getGroupIDs(username);
-                    const nusnet_id = await db.oneOrNone('SELECT nusnet_id FROM nusnet_id_username WHERE username = $1', username);
-                    user.group_ids = group_ids;
-                    user.nusnet_id = nusnet_id;
-                    resolve(user);
-                }
-                catch(err) {
-                    console.error(`Error fetching user ${username}`);
-                    reject(err);
-                }
-            });
-        });
+function findByUserID(user_id) {
+    return db.oneOrNone('SELECT * FROM users WHERE user_id = $1', user_id)
+        .then((user) => user ? _attachGroupIDs(user) : null);
 }
 
 function findByNusnetID(nusnet_id) {
-    const query = 'SELECT * FROM users WHERE username = (SELECT username FROM nusnet_id_username WHERE nusnet_id = $1)';
-    return db.oneOrNone(query, nusnet_id)
-        .then((user) => {
-            return new Promise(async (resolve, reject) => {
-                // If no user has been found, return null
-                if(!user) {
-                    resolve(user);
-                    return;
-                }
+    return db.oneOrNone('SELECT * FROM users WHERE nusnet_id = $1', nusnet_id)
+        .then((user) => user ? _attachGroupIDs(user) : null);
+}
 
-                // Attach related data to user object
-                try {
-                    const group_ids = await _getGroupIDs(user.username);
-                    user.nusnet_id = nusnet_id;
-                    user.group_ids = group_ids;
-                    resolve(user);
-                }
-                catch(err) {
-                    console.error(err);
-                    console.error(`Error fetching user with NUSNET ID ${nusnet_id}`);
-                    reject(err);
-                }
-            });
+function insert(u) {
+    return db.one(`INSERT INTO users (nusnet_id, username, fullname, email, timetableurl) 
+        VALUES ($(nusnet_id), $(username), $(fullname), $(email), $(timetableurl)) RETURNING user_id`, {
+            nusnet_id: u.nusnet_id,
+            username: u.username,
+            fullname: u.fullname,
+            email: u.email,
+            timetableurl: u.timetableurl
+        })
+        .then((user_id) => {
+            return db.one('SELECT * FROM users WHERE user_id = $1', user_id);
         });
 }
 
-function _getGroupIDs(username) {
-    return db.any('SELECT group_id FROM group_users WHERE username = $1', username);
+function _getGroupIDs(user_id) {
+    return db.any('SELECT group_id FROM group_users WHERE user_id = $1', user_id);
+}
+
+async function _attachGroupIDs(user) {
+    try {
+        const group_ids = await _getGroupIDs(user.user_id);
+        user.group_ids = group_ids;
+    }
+    catch(err) {
+        console.error(`Error fetching groups for user ${user.user_id}`);
+        console.error(err);
+    }
+    return user;
 }
 
 module.exports = {
-    findByUsername: findByUsername,
-    findByNusnetID: findByNusnetID
+    findByUserID: findByUserID,
+    findByNusnetID: findByNusnetID,
+    insert: insert
 };

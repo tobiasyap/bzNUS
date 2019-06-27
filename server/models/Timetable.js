@@ -9,7 +9,7 @@ function findByTimetableUrl(timetableurl) {
 }
 
 function insert(t) {
-    return db.none('INSERT INTO timetableurl_timetables(timetableurl, timetable) VALUES(${url}, ${tt})', {
+    return db.none('INSERT INTO timetableurl_timetables (timetableurl, timetable) VALUES (${url}, ${tt})', {
         url: t.timetableurl,
         tt: t.timetable
     });

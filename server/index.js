@@ -64,7 +64,7 @@ app.get('/auth/logout', (req, res) => {
     res.redirect(CLIENT_HOME_PAGE_URL);
 });
 
-// Specify middleware to check if a user has been authenticated
+// Specify middleware to block access if user is not authenticated
 const ensureAuthenticated = (req, res, next) => {
     if(!req.user) {
         res.status(401).json({
