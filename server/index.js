@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('@passport-next/passport');
+const cors = require('cors');
 
 const nusmods = require('./nusmods');
 const utils = require('../utils/timetable');
@@ -27,6 +28,13 @@ if(ENV === 'production') {
         res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
 }
+
+// set up cors to allow us to accept requests from our client
+app.use(cors({
+    origin: "http://localhost:3000", // allow to server to accept request from different origin
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true // allow session cookie from browser to pass through
+}));
 
 // Configure express-session
 app.use(session({
