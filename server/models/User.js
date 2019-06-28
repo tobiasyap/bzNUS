@@ -54,6 +54,15 @@ function update(u) {
     });
 }
 
+function updateTimetableURL(user_id, timetableurl) {
+    return db.tx(t => {
+        return t.batch([
+            t.none('UPDATE users SET timetableurl = $1 WHERE user_id = $2', timetableurl, user_id),
+            t.one('SELECT * FROM users WHERE user_id = $1', user_id)
+        ]);
+    });
+}
+
 function _getGroupIDs(user_id) {
     return db.any('SELECT group_id FROM group_users WHERE user_id = $1', user_id);
 }
@@ -74,5 +83,6 @@ module.exports = {
     findByUserID: findByUserID,
     findByNusnetID: findByNusnetID,
     insert: insert,
-    update: update
+    update: update,
+    updateTimetableURL: updateTimetableURL
 };

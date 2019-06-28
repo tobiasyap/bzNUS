@@ -163,6 +163,12 @@ router.put('/users/:userid', async (req, res) => {
         email: req.body.email,
         timetableurl: req.body.timetableurl
     };
+    if(reqUser.user_id !== req.params.userid) {
+        res.status(400).send('Error: body and URL user_id do not match.');
+        console.error(`Error updating ${req.params.userid}:
+            user_id does not match body ${reqUser.user_id}`);
+        return;
+    }
 
     try {
         await User.findByUserID(reqUser.user_id);
@@ -175,6 +181,37 @@ router.put('/users/:userid', async (req, res) => {
 
     try {
         const retUser = await User.update(reqUser);
+        res.send(retUser);
+    }
+    catch(err) {
+        res.status(500).send('Error updating user.');
+        console.error(err);
+        return;
+    }
+});
+
+router.put('/users/:userid/timetableurl', async (req, res) => {
+    const schema = {
+        timetableurl: Joi.string().required()
+    };
+    const validation = Joi.validate(req.body, schema);
+    if(validation.error) {
+        res.status(400).send(result.error);
+        console.error(result);
+        return;
+    }
+
+    try {
+        await User.findByUserID(req.params.userid);
+    }
+    catch(err) {
+        res.status(400).send('Specified user_id does not exist.');
+        console.error(err);
+        return;
+    }
+
+    try {
+        const retUser = await User.updateTimetableURL(req.params.userid, req.body.timetableurl);
         res.send(retUser);
     }
     catch(err) {
