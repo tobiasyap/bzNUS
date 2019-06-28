@@ -37,7 +37,6 @@ export default class NavBar extends React.Component {
 
   render() {
     const { location } = this.props;
-    const { authenticated } = this.props;
 
     if (location.pathname.match('/login') || location.pathname.match('/404')){
         return null;

@@ -10,14 +10,14 @@ import {
 } from 'react-router-dom';
 
 // Pages
-import MainPage from "./pages";
+import HomePage from "./pages";
 import NotFoundPage from "./pages/404";
 import LoginPage from  "./pages/login";
 import NusModsPage from "./pages/nusmods";
-import HomePage from "./pages/home";
 import GroupPage from './pages/group';
 
 import NavBar from './components/Navbar';
+import PrivateRoute from './components/privateroute';
 
 function App() {
 
@@ -28,10 +28,9 @@ function App() {
         <NavigationBar />
         <Switch>
           <Route exact path="/login" component={LoginPage} />
-          <Route exact path="/" component={MainPage} />
+          <Route exact path="/" component={HomePage} />
           <Route exact path="/404" component={NotFoundPage} />
           <Route exact path="/nusmods" component={NusModsPage} />
-          <Route exact path="/home" component={HomePage} />
           <Route exact path="/group" component={GroupPage} />
           <Redirect to="/404" />
         </Switch>
