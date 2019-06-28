@@ -12,6 +12,10 @@
 
 const db = require('../database');
 
+function findByGroupID(todo_id) {
+
+}
+
 function findByGroupID(group_id) {
     return db.any('SELECT * FROM todos WHERE todo_id = SELECT todo_id FROM group_todos WHERE group_id = $1', group_id);
 }
@@ -26,7 +30,12 @@ function insert(group_id, todo) {
     );
 }
 
+function remove(todo_id) {
+    return db.none('DELETE FROM todos WHERE todo_id = $1', todo_id);
+}
+
 module.exports = {
     findByGroupID: findByGroupID,
-    insert: insert
+    insert: insert,
+    remove: remove
 };

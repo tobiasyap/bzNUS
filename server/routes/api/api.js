@@ -5,13 +5,13 @@ const User = require('../../models/User');
 const Group = require('../../models/Group');
 const Todo = require('../../models/Todo');
 
-router.get('/users/:username', async (req, res) => {
+router.get('/users/:userid', async (req, res) => {
     try {
-        const user = await User.findByUsername(req.params.username);
+        const user = await User.findByUserID(req.params.userid);
         res.send(user);
     }
     catch(err) {
-        res.status(404).send('Error finding user with the given username.');
+        res.status(404).send('Error finding user with the given user_id.');
         console.error(err);
         return;
     }
@@ -23,7 +23,7 @@ router.get('/groups/:groupid', async (req, res) => {
         res.send(group);
     }
     catch(err) {
-        res.status(404).send('Error finding group with the given username.');
+        res.status(404).send('Error finding group with the given group_id.');
         console.error(err);
         return;
     }
@@ -33,7 +33,7 @@ router.post('/groups', async (req, res) => {
     // Validate request
     const schema = {
         name: Joi.string().max(80).required(),
-        username: Joi.array().length(1).required()
+        user_ids: Joi.array().length(1).required()
     };
     const validation = Joi.validate(req.body, schema);
     if(validation.error) {
@@ -43,15 +43,15 @@ router.post('/groups', async (req, res) => {
     }
     const reqGroup = {
         name: req.body.name,
-        usernames: req.body.usernames  
+        user_ids: req.body.user_ids  
     };
 
-    // Check that username exists
+    // Check that user_id exists
     try {
-        await findByUsername(reqGroup.usernames[0]);
+        await findByUserID(reqGroup.user_ids[0]);
     }
     catch(err) {
-        res.status(400).send('Specified username does not exist.');
+        res.status(400).send('Specified user_id does not exist.');
         console.error(err);
         return;
     }
@@ -106,31 +106,31 @@ router.post('/groups/:groupid/todos', async (req, res) => {
 });
 
 router.post('/groups/:groupid/users', async (req, res) => {
-    const username = req.body.username;
-    const groupid = req.params.groupid;
-    if(!username) {
-        res.status(400).send('Username not specified.');
+    const user_id = req.body.user_id;
+    const group_id = req.params.groupid;
+    if(!user_id) {
+        res.status(400).send('user_id not specified.');
     }
 
     try {
-        await Group.findByGroupID(groupid);
+        await Group.findByGroupID(group_id);
     }
     catch(err) {
-        res.status(400).send('Specified group does not exist.');
+        res.status(400).send('Specified group_id does not exist.');
         console.error(err);
         return;
     }
     try {
-        await User.findByUsername(username);
+        await User.findByUserID(user_id);
     }
     catch(err) {
-        res.status(400).send('Specified username does not exist.');
+        res.status(400).send('Specified user_id does not exist.');
         console.error(err);
         return;
     }
 
     try {
-        const retGU = Group.insertUsername(groupid, username);
+        const retGU = Group.insertUserID(group_id, user_id);
         res.send(retGU);
     }
     catch(err) {

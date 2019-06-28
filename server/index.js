@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // Serve client files
-var CLIENT_HOME_PAGE_URL = 'http://localhost:5000';
+var CLIENT_HOME_PAGE_URL = 'http://localhost:3000';
 if(ENV === 'production') {
     CLIENT_HOME_PAGE_URL = '/';
     app.use(express.static(path.join(__dirname, '../client/build')));

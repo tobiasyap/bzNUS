@@ -39,6 +39,21 @@ function insert(u) {
         });
 }
 
+function update(u) {
+    return db.tx(t => {
+        return t.batch([
+            t.none(`UPDATE users SET username = $(username), fullname = $(fullname),
+                email = $(email), timetableurl = $(timetableurl) WHERE user_id = $(user_id)`, {
+                username: u.username,
+                fullname: u.fullname,
+                email: u.email,
+                timetableurl: u.timetableurl
+            }),
+            t.one('SELECT * FROM users WHERE user_id = $1', u.user_id)
+        ]);
+    });
+}
+
 function _getGroupIDs(user_id) {
     return db.any('SELECT group_id FROM group_users WHERE user_id = $1', user_id);
 }
@@ -58,5 +73,6 @@ async function _attachGroupIDs(user) {
 module.exports = {
     findByUserID: findByUserID,
     findByNusnetID: findByNusnetID,
-    insert: insert
+    insert: insert,
+    update: update
 };
