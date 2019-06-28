@@ -28,7 +28,7 @@ export default class Grid extends React.Component {
             <td><li>Lisa</li><li>Mark</li></td>
             <td>Otto</td>
             <td>{ this.Data["GEH1063"][0]["startTime"] }</td>
-            <td>@mdo</td>
+            <td>Ben</td>
             <td>@mdos</td>
           </tr>
           <tr>

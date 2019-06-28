@@ -12,6 +12,9 @@ import {
   DropdownMenu,
   DropdownItem } from 'reactstrap';
 
+import PropTypes from "prop-types";
+
+
 export default class NavBar extends React.Component {
   constructor(props) {
     super(props);
@@ -28,8 +31,13 @@ export default class NavBar extends React.Component {
     });
   }
 
+  static propTypes = {
+    authenticated: PropTypes.bool.isRequired
+  };
+
   render() {
     const { location } = this.props;
+    const { authenticated } = this.props;
 
     if (location.pathname.match('/login') || location.pathname.match('/404')){
         return null;
@@ -72,7 +80,7 @@ export default class NavBar extends React.Component {
                 <NavLink href="/">MyTimetable</NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="/login">Logout</NavLink>
+                <NavLink onClick={this._handleLogoutClick}>Logout</NavLink>
               </NavItem>
             </Nav>
           </Collapse>
@@ -80,4 +88,15 @@ export default class NavBar extends React.Component {
       </div>
     );
   }
+
+  _handleLogoutClick = () => {
+    // Logout using Twitter passport api
+    // Set authenticated state to false in the HomePage
+    window.open("http://localhost:5000/auth/logout", "_self");
+    this.handleNotAuthenticated();
+  };
+
+  _handleNotAuthenticated = () => {
+    this.setState({ authenticated: false });
+  };
 }
