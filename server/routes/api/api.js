@@ -140,4 +140,48 @@ router.post('/groups/:groupid/users', async (req, res) => {
     }
 });
 
+router.put('/users/:userid', async (req, res) => {
+    const schema = {
+        user_id: Joi.integer().required(),
+        nusnet_id: Joi.integer(),
+        username: Joi.string(),
+        fullname: Joi.string(),
+        email: Joi.string(),
+        timetableurl: Joi.string(),
+    };
+    const validation = Joi.validate(req.body, schema);
+    if(validation.error) {
+        res.status(400).send(result.error);
+        console.error(result);
+        return;
+    }
+    const reqUser = {
+        user_id: req.body.user_id,
+        nusnet_id: req.body.nusnet_id,
+        username: req.body.username,
+        fullname: req.body.fullname,
+        email: req.body.email,
+        timetableurl: req.body.timetableurl
+    };
+
+    try {
+        await User.findByUserID(reqUser.user_id);
+    }
+    catch(err) {
+        res.status(400).send('Specified user_id does not exist.');
+        console.error(err);
+        return;
+    }
+
+    try {
+        const retUser = await User.update(reqUser);
+        res.send(retUser);
+    }
+    catch(err) {
+        res.status(500).send('Error updating user.');
+        console.error(err);
+        return;
+    }
+});
+
 module.exports = router;
