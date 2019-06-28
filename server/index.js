@@ -51,6 +51,22 @@ app.get('/auth/nus/return',
     })
 );
 
+// Allow retrival of user info when login is successful
+app.get('/auth/login/success', (req, res) => {
+    // req.user only exists if passport has authenticated
+    if(req.user) {
+        res.json({
+            sucess: true,
+            message: 'user is authenticated',
+            user: req.user,
+            cookies: req.cookies
+        });
+    }
+    else {
+        res.redirect(req.baseUrl + '/auth/login/failed');
+    }
+});
+
 app.get('/auth/login/failed', (req, res) => {
     res.status(401).json({
         success: false,
