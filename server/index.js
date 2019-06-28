@@ -56,10 +56,9 @@ app.get('/auth/login/success', (req, res) => {
     // req.user only exists if passport has authenticated
     if(req.user) {
         res.json({
-            sucess: true,
+            success: true,
             message: 'user is authenticated',
             user: req.user,
-            cookies: req.cookies
         });
     }
     else {
