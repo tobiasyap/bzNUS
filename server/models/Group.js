@@ -62,9 +62,20 @@ function updateName(group_id, name) {
     });
 }
 
+function remove(group_id) {
+    return db.tx(t => {
+        return t.batch([
+            t.none('DELETE FROM projectgroups WHERE group_id = $1', group_id),
+            t.none('SELECT * FROM projectgroups WHERE group_id = $1', group_id),
+            t.none('SELECT * FROM group_users WHERE group_id = $1', group_id)
+        ]);
+    });
+}
+
 module.exports = {
     findByGroupID: findByGroupID,
     insert: insert,
     insertUserID: insertUserID,
-    updateName: updateName
+    updateName: updateName,
+    remove: remove,
 };

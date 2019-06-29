@@ -289,4 +289,26 @@ router.put('/todos/:todoid', async (req, res) => {
     }
 });
 
+router.delete('/groups/:groupid', async (req, res) => {
+    try {
+        await Group.remove(req.params.groupid);
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).send('Error deleting group.');
+        return;
+    }
+});
+
+router.delete('/todos/:todoid', async (req, res) => {
+    try {
+        await Todo.remove(req.params.todoid);
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).send('Error deleting todo.');
+        return;
+    }
+});
+
 module.exports = router;

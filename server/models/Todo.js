@@ -41,7 +41,13 @@ function update(todo) {
 }
 
 function remove(todo_id) {
-    return db.none('DELETE FROM todos WHERE todo_id = $1', todo_id);
+    return db.tx(t => {
+        return t.batch([
+            db.none('DELETE FROM todos WHERE todo_id = $1', todo_id),
+            db.none('SELECT * FROM todos WHERE todo_id = $1', todo_id),
+            db.none('SELECT * FROM group_todos WHERE todo_id = $1', todo_id)
+        ]);
+    });
 }
 
 module.exports = {
