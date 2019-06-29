@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Joi = require('@hapi/joi');
+const errors = require('pg-promise').errors;
 
 const User = require('../../models/User');
 const Group = require('../../models/Group');
@@ -110,6 +111,7 @@ router.post('/groups/:groupid/users', async (req, res) => {
     const group_id = req.params.groupid;
     if(!user_id) {
         res.status(400).send('user_id not specified.');
+        return;
     }
 
     try {
@@ -164,7 +166,7 @@ router.put('/users/:userid', async (req, res) => {
         timetableurl: req.body.timetableurl
     };
     if(reqUser.user_id !== req.params.userid) {
-        res.status(400).send('Error: body and URL user_id do not match.');
+        res.status(400).send('Body and URL user_id do not match.');
         console.error(`Error updating ${req.params.userid}:
             user_id does not match body ${reqUser.user_id}`);
         return;
@@ -217,6 +219,72 @@ router.put('/users/:userid/timetableurl', async (req, res) => {
     catch(err) {
         res.status(500).send('Error updating user.');
         console.error(err);
+        return;
+    }
+});
+
+router.put('/groups/:groupid/name', async (req, res) => {
+    const validation = Joi.validate(req.body, {
+        name: Joi.string().required()
+    });
+    if(validation.error) {
+        res.status(400).send(result.error);
+        console.error(result);
+        return;
+    }
+    
+    try {
+        const retGroup = await Group.updateName(req.params.groupid, req.body.name);
+        res.send(retGroup);
+    }
+    catch(err) {
+        console.error(err);
+        if(err instanceof errors.QueryResultError) {
+            if(err.code === errors.queryResultErrorCode.noData) {
+                res.status(400).send('Specified group_id does not exist.');
+                return;
+            }
+        }
+        res.status(500).send('Error updating group.');
+        return;
+    }
+});
+
+router.put('/todos/:todoid', async (req, res) => {
+    if(req.params.todoid !== req.body.todo_id) {
+        res.status(400).send('Body and URL todo_id do not match.');
+        return;
+    }
+    const schema = {
+        todo_id: Joi.integer.required(),
+        title: Joi.string().required(),
+        description: Joi.string().required()
+    };
+    const validation = Joi.validate(req.body, schema);
+    if(validation.error) {
+        res.status(400).send(result.error);
+        console.error(result);
+        return;
+    }
+    const reqTodo = {
+        todo_id: req.body.todo_id,
+        title: req.body.title,
+        description: req.body.description
+    };
+
+    try {
+        const retTodo = await Todo.update(reqTodo);
+        res.send(retTodo);
+    }
+    catch(err) {
+        console.error(err);
+        if(err instanceof errors.QueryResultError) {
+            if(err.code === errors.queryResultErrorCode.noData) {
+                res.status(400).send('Specified todo_id does not exist.');
+                return;
+            }
+        }
+        res.status(500).send('Error updating todo.');
         return;
     }
 });

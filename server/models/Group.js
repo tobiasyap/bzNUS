@@ -53,8 +53,18 @@ function insertUserID(group_id, user_id) {
     );
 }
 
+function updateName(group_id, name) {
+    return db.tx(t => {
+        return t.batch([
+            t.none('UPDATE projectgroups SET name = $1 WHERE group_id = $2', name, group_id),
+            t.one('SELECT * FROM projectgroups WHERE group_id = $1', group_id)
+        ]);
+    });
+}
+
 module.exports = {
     findByGroupID: findByGroupID,
     insert: insert,
-    insertUserID: insertUserID
+    insertUserID: insertUserID,
+    updateName: updateName
 };

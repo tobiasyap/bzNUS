@@ -12,7 +12,7 @@
 
 const db = require('../database');
 
-function findByGroupID(todo_id) {
+function findByTodoID(todo_id) {
 
 }
 
@@ -30,6 +30,16 @@ function insert(group_id, todo) {
     );
 }
 
+function update(todo) {
+    return db.tx(t => {
+        return db.batch([
+            db.none('UPDATE todos SET title = $1, description = $2 WHERE todo_id = $3',
+                todo.title, todo.description, todo.todo_id),
+            db.one('SELECT * FROM todos WHERE todo_id = $1', todo.todo_id)
+        ]);
+    });
+}
+
 function remove(todo_id) {
     return db.none('DELETE FROM todos WHERE todo_id = $1', todo_id);
 }
@@ -37,5 +47,6 @@ function remove(todo_id) {
 module.exports = {
     findByGroupID: findByGroupID,
     insert: insert,
-    remove: remove
+    update: update,
+    remove: remove,
 };
