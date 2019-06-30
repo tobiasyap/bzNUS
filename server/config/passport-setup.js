@@ -41,7 +41,7 @@ module.exports = (passport) => {
             console.log('Now in verify callback.');
             console.log(`Received profile ${profile}`);
             try {
-                var user = await User.findByNusnetID(identifier);
+                let user = await User.findByNusnetID(identifier);
                 if(!user) {
                     user = {
                         nusnet_id: identifier,

@@ -72,10 +72,20 @@ function remove(group_id) {
     });
 }
 
+function removeUserID(user_id) {
+    return db.tx(t => {
+        return t.batch([
+            t.none('DELETE FROM group_users WHERE user_id = $1', user_id),
+            t.none('SELECT * FROM group_users WHERE user_id = $1', user_id)
+        ]);
+    });
+}
+
 module.exports = {
     findByGroupID: findByGroupID,
     insert: insert,
     insertUserID: insertUserID,
     updateName: updateName,
     remove: remove,
+    removeUserID: removeUserID,
 };

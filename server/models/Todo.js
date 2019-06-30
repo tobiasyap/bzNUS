@@ -13,7 +13,7 @@
 const db = require('../database');
 
 function findByTodoID(todo_id) {
-
+    return db.one('SELECT * FROM todos WHERE todo_id = $1', todo_id);
 }
 
 function findByGroupID(group_id) {
@@ -51,6 +51,7 @@ function remove(todo_id) {
 }
 
 module.exports = {
+    findByTodoID: findByTodoID,
     findByGroupID: findByGroupID,
     insert: insert,
     update: update,

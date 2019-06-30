@@ -300,6 +300,17 @@ router.delete('/groups/:groupid', async (req, res) => {
     }
 });
 
+router.delete('/groups/:groupid/users/:userid', async (req, res) => {
+    try {
+        await Group.removeUserID(req.params.groupid, req.params.userid);
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).send('Error removing user from group.');
+        return;
+    }
+});
+
 router.delete('/todos/:todoid', async (req, res) => {
     try {
         await Todo.remove(req.params.todoid);

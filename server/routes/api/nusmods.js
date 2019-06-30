@@ -14,7 +14,7 @@ router.get('/:url', async (req, res, next) => {
 
     // To reduce API calls to NUSMods, app will cache timetables in the database
     // First check if timetable already exists in database
-    var timetable;
+    let timetable;
     try {
         timetable = await Timetable.findByTimetableUrl(url);
     }
@@ -31,7 +31,7 @@ router.get('/:url', async (req, res, next) => {
         // Timetable does not exist in app database yet.
         // Follow the short shareURL and extract the serialized timetable
         // from the redirect URL's query
-        var serializedTimetable;
+        let serializedTimetable;
         try {
             serializedTimetable = await nusmods.getSerializedTimetable(url);
         }
