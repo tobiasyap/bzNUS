@@ -29,6 +29,7 @@ class App extends React.Component {
       authenticated: false,
       loaded: false // only render after authentication is complete
     };
+    console.log('in constructor');
   }
 
   static propTypes = {
@@ -36,7 +37,7 @@ class App extends React.Component {
       username: PropTypes.string,
       fullname: PropTypes.string,
       email: PropTypes.string,
-      timtableurl: PropTypes.string,
+      timetableurl: PropTypes.string,
       user_id: PropTypes.number,
       nusnet_id: PropTypes.string,
       group_ids: PropTypes.array
@@ -85,12 +86,10 @@ class App extends React.Component {
           <NavigationBar />
           <Switch>
             <Route exact path="/login" component={LoginPage} />
-            <Switch>
-                <PrivateRoute authed={this.state.authenticated} exact path="/" component={HomePage} />
-                <PrivateRoute authed={this.state.authenticated} exact path="/404" component={NotFoundPage} />
-                <PrivateRoute authed={this.state.authenticated} exact path="/nusmods" component={NusModsPage} />
-                <PrivateRoute authed={this.state.authenticated} exact path="/group" component={GroupPage} />
-            </Switch>
+            <PrivateRoute authed={this.state.authenticated} exact path="/" component={HomePage} />
+            <PrivateRoute authed={this.state.authenticated} exact path="/404" component={NotFoundPage} />
+            <PrivateRoute authed={this.state.authenticated} exact path="/nusmods" component={NusModsPage} />
+            <PrivateRoute authed={this.state.authenticated} exact path="/group" component={GroupPage} />
             <Redirect to="/404" />
           </Switch>
       </Router>

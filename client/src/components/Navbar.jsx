@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink as RRNavLink } from 'react-router-dom'; // For single-page linking
 import {
   Collapse,
   Navbar,
@@ -45,7 +46,7 @@ export default class NavBar extends React.Component {
     return (
       <div>
         <Navbar color="dark" dark expand="md">
-          <NavbarBrand href="/">bzNUS</NavbarBrand>
+          <NavbarBrand tag={RRNavLink} exact to="/">bzNUS</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
@@ -63,7 +64,7 @@ export default class NavBar extends React.Component {
                   <DropdownItem>
                     The Best Project Group
                   </DropdownItem>
-                  <DropdownItem href="/group">
+                  <DropdownItem tag={RRNavLink} exact to="/group">
                     Group Page Example
                   </DropdownItem>
                   <DropdownItem divider />
@@ -76,7 +77,7 @@ export default class NavBar extends React.Component {
                 </DropdownMenu>
               </UncontrolledDropdown>
               <NavItem>
-                <NavLink href="/">MyTimetable</NavLink>
+                <NavLink tag={RRNavLink} exact to="/">MyTimetable</NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={this._handleLogoutClick}>Logout</NavLink>

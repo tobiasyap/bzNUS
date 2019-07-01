@@ -10,13 +10,13 @@ export default class LoginPage extends Component {
         return (
             <div class="centralize-login">
                 <h1>bzNUS</h1>
-                <Button color="warning" onClick={this._handleSignInClick}>Login with NUSNET</Button>
+                <Button color="primary" onClick={this._handleSignInClick}>Login with NUSNET</Button>
             </div>
         );
     }
 
     _handleSignInClick = () => {
-        // Authenticate using via passport api in the backend
+        // Authenticate via passport API in the backend
         // Open NUS OpenID login page
         // Upon successful login, a cookie session will be stored in the client
         window.open("http://localhost:5000/auth/nus", "_self");
