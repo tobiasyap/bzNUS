@@ -34,7 +34,7 @@ class NusModsPage extends Component {
 
     handleUpdateTimetableURL = () => {
         const encodedURL = encodeURIComponent(this.state.newTimetableURL);
-        const userID = 2;
+        const userID = 2; // TODO: Access User object
         fetch(`/api/users/${userID}/timetableurl`, {
             method: 'put',
             credentials: 'include',
@@ -50,7 +50,7 @@ class NusModsPage extends Component {
                     alert: 'Successfully updated timetable.',
                     error: null
                 });
-                // Update app User object
+                // TODO: Update app User object
             }
             else {
                 throw new Error('Failed to update timetableurl');
