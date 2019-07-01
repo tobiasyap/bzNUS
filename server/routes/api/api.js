@@ -5,6 +5,9 @@ const errors = require('pg-promise').errors;
 const User = require('../../models/User');
 const Group = require('../../models/Group');
 const Todo = require('../../models/Todo');
+const DbUtilities = require('../../models/Utilities');
+
+const Global = require('../../config/Global');
 
 // ---------- GET METHODS ----------
 
@@ -31,6 +34,23 @@ router.get('/groups/:groupid', async (req, res) => {
         return;
     }
 });
+
+router.get('/time', async (req, res) => {
+    try {
+        const now = await DbUtilities.getNow();
+        const timeData = {
+            now: now,
+            year: Global.YEAR,
+            semester: Global.SEMESTER,
+        };
+        res.send(timeData);
+    }
+    catch(err) {
+        res.status(500).send('Error connecting to database.');
+        console.error(err);
+        return;
+    }
+}); 
 
 // ---------- POST METHODS ----------
 

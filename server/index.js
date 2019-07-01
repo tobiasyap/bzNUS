@@ -5,7 +5,7 @@ const session = require('express-session');
 const passport = require('@passport-next/passport');
 const cors = require('cors');
 
-const db = require('./database');
+const DbUtilities = require('./models/Utilities');
 const Global = require('./config/Global');
 
 const nusmodsRouter = require('./routes/api/nusmods');
@@ -78,7 +78,7 @@ app.get('/', ensureAuthenticated, (req, res) => {
 (async () => {
     let time;
     try {
-        time = await db.one('SELECT NOW()');
+        time = await DbUtilities.getNow();
     }
     catch(err) {
         console.error('Error connecting to PostgreSQL!');
