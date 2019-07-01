@@ -16,6 +16,7 @@ import NotFoundPage from "./pages/404";
 import LoginPage from  "./pages/login";
 import NusModsPage from "./pages/nusmods";
 import GroupPage from './pages/group';
+import ProfilePage from "./pages/profile";
 
 import NavBar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
@@ -92,6 +93,9 @@ class App extends React.Component {
               component={NusModsPage} user={this.state.user} onUserChange = {this.onUserChange}
             />
             <PrivateRoute authed={auth} exact path="/group" component={GroupPage} />
+            <PrivateRoute authed={auth} exact path="/profile" component={ProfilePage}
+              user={this.state.user} 
+            />
             <Redirect to="/404" />
           </Switch>
       </Router>

@@ -77,7 +77,7 @@ export default class NavBar extends React.Component {
                 </DropdownMenu>
               </UncontrolledDropdown>
               <NavItem>
-                <NavLink tag={RRNavLink} exact to="/">MyTimetable</NavLink>
+                <NavLink tag={RRNavLink} exact to="/profile">Profile</NavLink>
               </NavItem>
               <NavItem>
                 <NavLink onClick={this._handleLogoutClick}>Logout</NavLink>
