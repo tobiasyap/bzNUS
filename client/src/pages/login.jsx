@@ -10,7 +10,7 @@ export default class LoginPage extends Component {
         return (
             <div class="centralize-login">
                 <h1>bzNUS</h1>
-                <Button color="warning" onClick={this._handleSignInClick}>Login with NUS OpenID</Button>
+                <Button color="warning" onClick={this._handleSignInClick}>Login with NUSNET</Button>
             </div>
         );
     }
@@ -20,5 +20,5 @@ export default class LoginPage extends Component {
         // Open NUS OpenID login page
         // Upon successful login, a cookie session will be stored in the client
         window.open("http://localhost:5000/auth/nus", "_self");
-      };
+    };
 };

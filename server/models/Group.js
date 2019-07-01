@@ -39,7 +39,7 @@ function insert(group) {
             INSERT INTO group_users (group_id, user_id) 
                 VALUES (INSERT INTO projectgroups (group_name) VALUES ($1) RETURNING group_id, $2)
                 RETURNING group_id;`, 
-        group.name, group.user_ids[0]
+        [group.name, group.user_ids[0]]
     );
 }
 
@@ -49,14 +49,14 @@ function insertUserID(group_id, user_id) {
         INSERT INTO group_users (group_id, user_id) VALUES ($1, $2);
         SELECT * FROM group_users WHERE group_id = $1 AND user_id = $2;
         COMMIT;`,
-        group_id, user_id
+        [group_id, user_id]
     );
 }
 
 function updateName(group_id, name) {
     return db.tx(t => {
         return t.batch([
-            t.none('UPDATE projectgroups SET name = $1 WHERE group_id = $2', name, group_id),
+            t.none('UPDATE projectgroups SET name = $1 WHERE group_id = $2', [name, group_id]),
             t.one('SELECT * FROM projectgroups WHERE group_id = $1', group_id)
         ]);
     });

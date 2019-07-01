@@ -56,7 +56,7 @@ export default class HomePage extends React.Component {
 
   render() {
     const { authenticated } = this.state;
-    const linked_with_nusmods = this.state.user.timtableurl;
+    const linked_with_nusmods = this.state.user.timetableurl;
 
     return (
       <div>
@@ -64,12 +64,12 @@ export default class HomePage extends React.Component {
               <h1>Welcome!</h1>
             ) : (
               <div>
-                <h1>You have login succcessfully!</h1>
+                <h1>You have logged in succcessfully!</h1>
                 <h2>Welcome {this.state.user.fullname}!</h2>
                 {!linked_with_nusmods ? (
                   <Link to="/nusmods">Link to NUSMods</Link>
                 ) : (
-                  <h4>You have linked with nusmods.</h4>
+                  <h4>You have linked with NUSMods.</h4>
                 )}
               </div>
             )}

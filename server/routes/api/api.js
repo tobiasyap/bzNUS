@@ -6,6 +6,8 @@ const User = require('../../models/User');
 const Group = require('../../models/Group');
 const Todo = require('../../models/Todo');
 
+// ---------- GET METHODS ----------
+
 router.get('/users/:userid', async (req, res) => {
     try {
         const user = await User.findByUserID(req.params.userid);
@@ -29,6 +31,8 @@ router.get('/groups/:groupid', async (req, res) => {
         return;
     }
 });
+
+// ---------- POST METHODS ----------
 
 router.post('/groups', async (req, res) => {
     // Validate request
@@ -142,6 +146,8 @@ router.post('/groups/:groupid/users', async (req, res) => {
     }
 });
 
+// ---------- PUT METHODS ----------
+
 router.put('/users/:userid', async (req, res) => {
     const schema = {
         user_id: Joi.integer().required(),
@@ -213,6 +219,7 @@ router.put('/users/:userid/timetableurl', async (req, res) => {
     }
 
     try {
+        console.log('Received: ', req.params.userid, ' ', req.body.timetableurl);
         const retUser = await User.updateTimetableURL(req.params.userid, req.body.timetableurl);
         res.send(retUser);
     }
@@ -288,6 +295,8 @@ router.put('/todos/:todoid', async (req, res) => {
         return;
     }
 });
+
+// ---------- DELETE METHODS ----------
 
 router.delete('/groups/:groupid', async (req, res) => {
     try {

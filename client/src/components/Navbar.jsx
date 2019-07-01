@@ -55,7 +55,7 @@ export default class NavBar extends React.Component {
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem>
-                    CP2016
+                    CP2106
                   </DropdownItem>
                   <DropdownItem>
                     IS1103
@@ -92,7 +92,7 @@ export default class NavBar extends React.Component {
     // Logout using Twitter passport api
     // Set authenticated state to false in the HomePage
     window.open("http://localhost:5000/auth/logout", "_self");
-    this.handleNotAuthenticated();
+    this._handleNotAuthenticated();
   };
 
   _handleNotAuthenticated = () => {

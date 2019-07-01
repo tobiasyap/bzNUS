@@ -26,7 +26,7 @@ function insert(group_id, todo) {
             INSERT INTO group_todos (group_id, todo_id) 
                 VALUES ($1, INSERT INTO todos (title, description) VALUES ($2, $3) RETURNING todo_id)
                 RETURNING todo_id`,
-        group_id, todo.title, todo.description
+        [group_id, todo.title, todo.description]
     );
 }
 
@@ -34,7 +34,7 @@ function update(todo) {
     return db.tx(t => {
         return db.batch([
             db.none('UPDATE todos SET title = $1, description = $2 WHERE todo_id = $3',
-                todo.title, todo.description, todo.todo_id),
+                [todo.title, todo.description, todo.todo_id]),
             db.one('SELECT * FROM todos WHERE todo_id = $1', todo.todo_id)
         ]);
     });
