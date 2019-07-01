@@ -51,7 +51,8 @@ function update(u) {
             }),
             t.one('SELECT * FROM users WHERE user_id = $1', u.user_id)
         ]);
-    });
+    })
+    .then(_attachGroupIDs(user));
 }
 
 function updateTimetableURL(user_id, timetableurl) {
@@ -60,7 +61,8 @@ function updateTimetableURL(user_id, timetableurl) {
             t.none('UPDATE users SET timetableurl = $1 WHERE user_id = $2', [timetableurl, user_id]),
             t.one('SELECT * FROM users WHERE user_id = $1', user_id)
         ]);
-    });
+    })
+    .then(user => _attachGroupIDs(user));
 }
 
 function _getGroupIDs(user_id) {

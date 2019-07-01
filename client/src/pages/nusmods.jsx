@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 import {
   Container,
@@ -15,8 +16,6 @@ import {
   Alert
 } from 'reactstrap';
 
-import { Link } from 'react-router-dom';
-
 class NusModsPage extends Component {
     constructor(props) {
         super(props);
@@ -28,14 +27,19 @@ class NusModsPage extends Component {
         }
     }
 
+    static propTypes = {
+        user: PropTypes.object.isRequired,
+        onUserChange: PropTypes.func.isRequired
+    };
+
     handleInputChange = (e) => {
         this.setState({newTimetableURL: e.target.value});
     };
 
     handleUpdateTimetableURL = () => {
         const encodedURL = encodeURIComponent(this.state.newTimetableURL);
-        const userID = 2; // TODO: Access User object
-        fetch(`/api/users/${userID}/timetableurl`, {
+        const { user } = this.props;
+        fetch(`/api/users/${user.user_id}/timetableurl`, {
             method: 'put',
             credentials: 'include',
             headers: { 
@@ -50,7 +54,8 @@ class NusModsPage extends Component {
                     alert: 'Successfully updated timetable.',
                     error: null
                 });
-                // TODO: Update app User object
+                // Update app User object
+                this.props.onUserChange(res.json());
             }
             else {
                 throw new Error('Failed to update timetableurl');

@@ -78,7 +78,7 @@ class App extends React.Component {
 
   render() {
     const NavigationBar = withRouter(NavBar);
-    console.log('authenticated:', this.state.authenticated);
+    const auth = this.state.authenticated;
 
     if(!this.state.loaded) return null;
     return (
@@ -86,19 +86,21 @@ class App extends React.Component {
           <NavigationBar />
           <Switch>
             <Route exact path="/login" component={LoginPage} />
-            <PrivateRoute authed={this.state.authenticated} exact path="/" component={HomePage} />
-            <PrivateRoute authed={this.state.authenticated} exact path="/404" component={NotFoundPage} />
-            <PrivateRoute authed={this.state.authenticated} exact path="/nusmods" component={NusModsPage} />
-            <PrivateRoute authed={this.state.authenticated} exact path="/group" component={GroupPage} />
+            <PrivateRoute authed={auth} exact path="/" component={HomePage} />
+            <PrivateRoute authed={auth} exact path="/404" component={NotFoundPage} />
+            <PrivateRoute authed={auth} exact path="/nusmods" 
+              component={NusModsPage} user={this.state.user} onUserChange = {this.onUserChange}
+            />
+            <PrivateRoute authed={auth} exact path="/group" component={GroupPage} />
             <Redirect to="/404" />
           </Switch>
       </Router>
     );
   }
   
-  _handleNotAuthenticated = () => {
-    this.setState({ authenticated: false });
-  };
+  onUserChange = (user) => {
+    this.setState({ user: user });
+  }
 }
 
 export default App;
