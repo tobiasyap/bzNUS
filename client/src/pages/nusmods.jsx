@@ -40,7 +40,7 @@ class NusModsPage extends Component {
     const encodedURL = encodeURIComponent(this.state.newTimetableURL);
     const { user } = this.props;
     fetch(`/api/users/${user.user_id}/timetableurl`, {
-      method: "put",
+      method: "PUT",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",

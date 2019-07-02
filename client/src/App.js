@@ -46,35 +46,7 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    // Fetch does not send cookies. So you should add credentials: 'include'
-    fetch("http://localhost:5000/auth/login/success", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": true
-      }
-    })
-      .then(response => {
-        if (response.status === 200) return response.json();
-        throw new Error("failed to authenticate user");
-      })
-      .then(responseJson => {
-        this.setState({
-          authenticated: true,
-          user: responseJson.user
-        });
-      })
-      .catch(error => {
-        this.setState({
-          authenticated: false,
-          error: "Failed to authenticate user"
-        });
-      })
-      .finally(() => {
-        this.setState({ loaded: true });
-      });
+    this.authenticateAndFetchUser();
   }
 
   render() {
@@ -123,8 +95,40 @@ class App extends React.Component {
   }
 
   onUserChange = user => {
-    this.setState({ user: user });
+    this.authenticateAndFetchUser();
   };
+
+  authenticateAndFetchUser = () => {
+    // Fetch does not send cookies. So you should add credentials: 'include'
+    fetch("http://localhost:5000/auth/login/success", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": true
+      }
+    })
+      .then(response => {
+        if (response.status === 200) return response.json();
+        throw new Error("Failed to authenticate user");
+      })
+      .then(responseJson => {
+        this.setState({
+          authenticated: true,
+          user: responseJson.user
+        });
+      })
+      .catch(error => {
+        this.setState({
+          authenticated: false,
+          error: "Failed to authenticate user"
+        });
+      })
+      .finally(() => {
+        this.setState({ loaded: true });
+      });
+  }
 }
 
 export default App;

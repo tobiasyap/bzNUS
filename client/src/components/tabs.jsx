@@ -13,6 +13,7 @@ import {
     Col } from 'reactstrap';
 import classnames from 'classnames';
 import Grid from './grid';
+import GroupSchedule from './GroupSchedule';
 
 export default class Tabs extends React.Component {
   constructor(props) {
@@ -75,6 +76,7 @@ export default class Tabs extends React.Component {
                 <h4>Welcome to Group Example Home Page</h4>
               </Col>
             </Row>
+            <GroupSchedule users={[]}/>
           </TabPane>
           <TabPane tabId="2">
             <Row>

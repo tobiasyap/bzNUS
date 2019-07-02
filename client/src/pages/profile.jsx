@@ -44,7 +44,7 @@ class ProfilePage extends React.Component {
   onSubmit = event => {
     const { user } = this.props;
     fetch(`/api/users/${user.user_id}`, {
-      method: "put",
+      method: "PUT",
       credentials: "include",
       headers: {
         Accept: "application/json",
@@ -62,6 +62,7 @@ class ProfilePage extends React.Component {
       })
     })
     .then(res => {
+      console.log("response received:", res);
       if(res.status === 200) {
         // Update App User object
         this.props.onUserChange(res.json());
