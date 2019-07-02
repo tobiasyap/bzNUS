@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import PropTypes from "prop-types";
 
 import {
@@ -8,18 +8,18 @@ import {
   Link,
   Redirect,
   withRouter
-} from 'react-router-dom';
+} from "react-router-dom";
 
 // Pages
 import HomePage from "./pages";
 import NotFoundPage from "./pages/404";
-import LoginPage from  "./pages/login";
+import LoginPage from "./pages/login";
 import NusModsPage from "./pages/nusmods";
-import GroupPage from './pages/group';
+import GroupPage from "./pages/group";
 import ProfilePage from "./pages/profile";
 
-import NavBar from './components/Navbar';
-import PrivateRoute from './components/PrivateRoute';
+import NavBar from "./components/Navbar";
+import PrivateRoute from "./components/PrivateRoute";
 
 class App extends React.Component {
   constructor(props) {
@@ -30,7 +30,7 @@ class App extends React.Component {
       authenticated: false,
       loaded: false // only render after authentication is complete
     };
-    console.log('in constructor');
+    console.log("in constructor");
   }
 
   static propTypes = {
@@ -81,30 +81,50 @@ class App extends React.Component {
     const NavigationBar = withRouter(NavBar);
     const auth = this.state.authenticated;
 
-    if(!this.state.loaded) return null;
+    if (!this.state.loaded) return null;
     return (
       <Router>
-          <NavigationBar />
-          <Switch>
-            <Route exact path="/login" component={LoginPage} />
-            <PrivateRoute authed={auth} exact path="/" component={HomePage} />
-            <PrivateRoute authed={auth} exact path="/404" component={NotFoundPage} />
-            <PrivateRoute authed={auth} exact path="/nusmods" 
-              component={NusModsPage} user={this.state.user} onUserChange = {this.onUserChange}
-            />
-            <PrivateRoute authed={auth} exact path="/group" component={GroupPage} />
-            <PrivateRoute authed={auth} exact path="/profile" component={ProfilePage}
-              user={this.state.user} 
-            />
-            <Redirect to="/404" />
-          </Switch>
+        <NavigationBar />
+        <Switch>
+          <Route exact path="/login" component={LoginPage} />
+          <PrivateRoute authed={auth} exact path="/" component={HomePage} />
+          <PrivateRoute
+            authed={auth}
+            exact
+            path="/404"
+            component={NotFoundPage}
+          />
+          <PrivateRoute
+            authed={auth}
+            exact
+            path="/nusmods"
+            component={NusModsPage}
+            user={this.state.user}
+            onUserChange={this.onUserChange}
+          />
+          <PrivateRoute
+            authed={auth}
+            exact
+            path="/group"
+            component={GroupPage}
+          />
+          <PrivateRoute
+            authed={auth}
+            exact
+            path="/profile"
+            component={ProfilePage}
+            user={this.state.user}
+            onUserChange={this.onUserChange}
+          />
+          <Redirect to="/404" />
+        </Switch>
       </Router>
     );
   }
-  
-  onUserChange = (user) => {
+
+  onUserChange = user => {
     this.setState({ user: user });
-  }
+  };
 }
 
 export default App;

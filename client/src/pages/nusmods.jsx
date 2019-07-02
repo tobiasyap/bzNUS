@@ -74,7 +74,7 @@ class NusModsPage extends Component {
         <Container fluid className="Centered">
           <Row>
             <Col>
-              Go to NUSMods, click on share/sync, copy link URL, paste URL
+              Go to NUSMods, click on Share/Sync, copy URL and paste it here
             </Col>
           </Row>
           <InputGroup>
@@ -84,7 +84,7 @@ class NusModsPage extends Component {
               onChange={this.handleInputChange}
             />
             <InputGroupAddon addonType="append">
-              <Button onClick={this.handleUpdateTimetableURL}>Link!</Button>
+              <Button onClick={this.handleUpdateTimetableURL}>Sync</Button>
             </InputGroupAddon>
           </InputGroup>
         </Container>
