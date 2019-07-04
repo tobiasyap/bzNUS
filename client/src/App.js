@@ -19,7 +19,7 @@ import GroupPage from "./pages/group";
 import ProfilePage from "./pages/profile";
 
 import NavBar from "./components/Navbar";
-import PrivateRoute from "./components/PrivateRoute";
+import PrivateRoute from "./components/privateroute";
 
 class App extends React.Component {
   constructor(props) {
