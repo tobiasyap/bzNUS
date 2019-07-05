@@ -22,6 +22,7 @@ import ProfilePage from "./pages/profile";
 import SideBar from "./components/SideBar";
 import NavBar from "./components/Navbar";
 import PrivateRoute from "./components/privateroute";
+import GroupCreationModal from "./components/GroupCreationModal";
 
 class App extends React.Component {
   constructor(props) {
@@ -33,9 +34,9 @@ class App extends React.Component {
       error: null,
       authenticated: false,
       loaded: false, // only render after authentication is complete
-      showSidebar: true
+      showSidebar: true,
+      showGroupCreationModal: false
     };
-    console.log("in constructor");
   }
 
   static propTypes = {
@@ -58,6 +59,8 @@ class App extends React.Component {
   render() {
     const NavigationBar = withRouter(NavBar);
     const AutoSideBar = withRouter(SideBar);
+    const GroupButtons = this.GroupButtons;
+
     const { authenticated, loaded } = this.state;
     const { location } = this.props;
 
@@ -69,9 +72,10 @@ class App extends React.Component {
             <div>
               <ListGroup>
                 <ListGroupItem>
-                  <Button tag={Link} exact to="/creategroup">
-                    Create new Group
+                  <Button onClick={this.onGroupCreationButtonClick}>
+                    Create a group
                   </Button>
+                  <GroupButtons />
                 </ListGroupItem>
               </ListGroup>
             </div>
@@ -117,6 +121,10 @@ class App extends React.Component {
             />
             <Redirect to="/404" />
           </Switch>
+          <GroupCreationModal
+            isOpen={this.state.showGroupCreationModal}
+            onToggle={this.onGroupCreationToggle}
+          />
         </AutoSideBar>
       </Router>
     );
@@ -145,8 +153,17 @@ class App extends React.Component {
   };
 
   onGroupPageUnmount = () => {
-    // Reset sidebar group radio buttons 
+    // Reset sidebar group radio buttons
     this.setState({ selectedGroupID: -1 });
+  };
+
+  onGroupCreationButtonClick = () => {
+    this.setState({ showGroupCreationModal: true });
+  };
+
+  onGroupCreationToggle = () => {
+    const { showGroupCreationModal } = this.state;
+    this.setState({ showGroupCreationModal: !showGroupCreationModal });
   };
 
   fetchAuthenticatedUser = () => {
@@ -183,7 +200,7 @@ class App extends React.Component {
 
   fetchGroups = () => {
     console.log(this.state.user.group_ids);
-    if(!this.state.user.group_ids) {
+    if (!this.state.user.group_ids) {
       this.setState({ groups: [] });
       return;
     }

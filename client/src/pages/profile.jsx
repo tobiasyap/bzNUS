@@ -142,6 +142,7 @@ class ProfilePage extends React.Component {
           </FormGroup>
           <Button>Save</Button>
         </Form>
+        <p> </p>
         <Button tag={Link} to="/nusmods">
           Sync with NUSMods
         </Button>
