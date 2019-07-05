@@ -74,7 +74,7 @@ router.post("/groups", async (req, res) => {
 
   // Check that user_id exists
   try {
-    await findByUserID(reqGroup.user_ids[0]);
+    await User.findByUserID(reqGroup.user_ids[0]);
   } catch (err) {
     res.status(400).send("Specified user_id does not exist.");
     console.error(err);

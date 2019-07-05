@@ -52,14 +52,15 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    this.fetchAuthenticatedUser();
-    this.fetchGroups();
+    this.fetchAuthenticatedUser().then(() => {
+      this.fetchGroups();
+    });
   }
 
   render() {
     const NavigationBar = withRouter(NavBar);
     const AutoSideBar = withRouter(SideBar);
-    const GroupButtons = this.GroupButtons;
+    const ListGroupButtons = this.ListGroupButtons;
 
     const { authenticated, loaded } = this.state;
     const { location } = this.props;
@@ -71,12 +72,13 @@ class App extends React.Component {
           sidebar={
             <div>
               <ListGroup>
-                <ListGroupItem>
-                  <Button onClick={this.onGroupCreationButtonClick}>
-                    Create a group
-                  </Button>
-                  <GroupButtons />
+                <ListGroupItem
+                  tag="button"
+                  onClick={this.onGroupCreationButtonClick}
+                >
+                  Create a group
                 </ListGroupItem>
+                <ListGroupButtons />
               </ListGroup>
             </div>
           }
@@ -124,25 +126,28 @@ class App extends React.Component {
           <GroupCreationModal
             isOpen={this.state.showGroupCreationModal}
             onToggle={this.onGroupCreationToggle}
+            user_id={this.state.user.user_id}
           />
         </AutoSideBar>
       </Router>
     );
   }
 
-  GroupButtons = props => {
+  ListGroupButtons = props => {
     let groupButtons = [];
+    console.log(this.state.groups);
     for (const group of this.state.groups) {
       groupButtons.push(
-        <Button
-          key={`gbutton_${group.group_id}`}
+        <ListGroupItem
+          key={`lgi_${group.group_id}`}
+          tag="button"
           onClick={() => {
             this.setState({ selectedGroupID: group.group_id });
           }}
           active={this.state.selectedGroupID === group.group_id}
         >
           {group.name}
-        </Button>
+        </ListGroupItem>
       );
     }
     return groupButtons;
@@ -168,7 +173,7 @@ class App extends React.Component {
 
   fetchAuthenticatedUser = () => {
     // Fetch does not send cookies. So you should add credentials: 'include'
-    fetch("http://localhost:5000/auth/login/success", {
+    return fetch("http://localhost:5000/auth/login/success", {
       method: "GET",
       credentials: "include",
       headers: {
@@ -205,7 +210,9 @@ class App extends React.Component {
       return;
     }
     let groups = [];
-    for (const group_id of this.state.user.group_ids) {
+    console.log(this.state.user.group_ids);
+    for (let group_id of this.state.user.group_ids) {
+      console.log("fetching: ", group_id);
       groups.push(
         fetch(`/api/groups/${group_id}`, {
           method: "GET",

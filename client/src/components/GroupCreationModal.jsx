@@ -1,5 +1,17 @@
-import React from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import React from "react";
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Col,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Spinner
+} from "reactstrap";
 import PropTypes from "prop-types";
 
 class GroupCreationModal extends React.Component {
@@ -7,18 +19,26 @@ class GroupCreationModal extends React.Component {
     super(props);
     this.state = {
       name: "",
-      description: ""
+      description: "",
+      loading: false
     };
   }
 
   static propTypes = {
+    user_id: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired
   };
 
   toggle = () => {
     this.props.onToggle();
-  }
+  };
+
+  handleInputChange = async event => {
+    await this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
 
   render() {
     return (
@@ -26,16 +46,58 @@ class GroupCreationModal extends React.Component {
         <Modal isOpen={this.props.isOpen} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>Create a group</ModalHeader>
           <ModalBody>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            <Form>
+              <FormGroup>
+                <Label for="formName">Group name</Label>
+                <Input
+                  type="text"
+                  name="name"
+                  id="formName"
+                  placeholder="Enter group name"
+                  value={this.state.name}
+                  onChange={e => this.handleInputChange(e)}
+                />
+              </FormGroup>
+            </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.toggle}>Create</Button>{' '}
-            <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+            {this.state.loading &&
+              <Spinner size="sm" color="primary" />
+            }
+            <Button color="primary" onClick={this.onSubmit}>
+              Create
+            </Button>{" "}
+            <Button color="secondary" onClick={this.toggle}>
+              Cancel
+            </Button>
           </ModalFooter>
         </Modal>
       </div>
     );
   }
+
+  onSubmit = () => {
+    this.setState({ loading: true });
+    try {
+      fetch("/api/groups", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": true
+        },
+        body: JSON.stringify({
+          name: this.state.name,
+          user_ids: [this.props.user_id]
+        })
+      });
+    }
+    finally {
+      this.setState({ loading: false });
+    }
+    this.toggle();
+  };
 }
 
 export default GroupCreationModal;
