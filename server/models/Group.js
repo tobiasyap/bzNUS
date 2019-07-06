@@ -26,10 +26,11 @@ function findByGroupID(group_id) {
             row => row.user_id
           );
           const todos = await db.any(
-            "SELECT * FROM todos WHERE todo_id = (SELECT todo_id FROM group_todos WHERE group_id = $1)",
+            "SELECT * FROM todos WHERE todo_id IN (SELECT todo_id FROM group_todos WHERE group_id = $1)",
             group_id
           );
           g.user_ids = user_ids;
+          console.log("todos:", todos);
           g.todos = todos;
           resolve(g);
         } catch (err) {

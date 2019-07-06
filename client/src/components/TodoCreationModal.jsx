@@ -14,17 +14,18 @@ import {
 } from "reactstrap";
 import PropTypes from "prop-types";
 
-class GroupCreationModal extends React.Component {
+class TodoCreationModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: "",
+      title: "",
+      description: "",
       loading: false
     };
   }
 
   static propTypes = {
-    user_id: PropTypes.number.isRequired,
+    group_id: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired
   };
@@ -43,17 +44,28 @@ class GroupCreationModal extends React.Component {
     return (
       <div>
         <Modal isOpen={this.props.isOpen} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle}>Create a group</ModalHeader>
+          <ModalHeader toggle={this.toggle}>Create a todo</ModalHeader>
           <ModalBody>
             <Form>
               <FormGroup>
-                <Label for="formName">Group name</Label>
+                <Label for="formTitle">Title</Label>
                 <Input
                   type="text"
-                  name="name"
-                  id="formName"
-                  placeholder="Enter group name"
-                  value={this.state.name}
+                  name="title"
+                  id="formTitle"
+                  placeholder="Enter todo title"
+                  value={this.state.title}
+                  onChange={e => this.handleInputChange(e)}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="formDescription">Description</Label>
+                <Input
+                  type="textarea"
+                  name="description"
+                  id="formDescription"
+                  placeholder="Enter todo description"
+                  value={this.state.description}
                   onChange={e => this.handleInputChange(e)}
                 />
               </FormGroup>
@@ -78,7 +90,7 @@ class GroupCreationModal extends React.Component {
   onSubmit = () => {
     this.setState({ loading: true });
     try {
-      fetch("/api/groups", {
+      fetch(`/api/groups/${this.props.group_id}/todos`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -87,10 +99,11 @@ class GroupCreationModal extends React.Component {
           "Access-Control-Allow-Credentials": true
         },
         body: JSON.stringify({
-          name: this.state.name,
-          user_ids: [this.props.user_id]
+          title: this.state.title,
+          description: this.state.description
         })
       });
+      this.props.onCreate(); // Update group state
     }
     finally {
       this.setState({ loading: false });
@@ -99,4 +112,4 @@ class GroupCreationModal extends React.Component {
   };
 }
 
-export default GroupCreationModal;
+export default TodoCreationModal;

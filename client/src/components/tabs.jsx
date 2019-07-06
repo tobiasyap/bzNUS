@@ -5,10 +5,6 @@ import {
   Nav,
   NavItem,
   NavLink,
-  Card,
-  Button,
-  CardTitle,
-  CardText,
   Row,
   Col
 } from "reactstrap";
@@ -18,6 +14,7 @@ import PropTypes from "prop-types";
 import Grid from "./grid";
 import GroupSchedule from "./GroupSchedule";
 import MemberList from "./MemberList";
+import TodoGrid from "./TodoGrid";
 
 export default class Tabs extends React.Component {
   constructor(props) {
@@ -97,26 +94,8 @@ export default class Tabs extends React.Component {
             <GroupSchedule users={[]} />
           </TabPane>
           <TabPane tabId="2">
-            <Row>
-              <Col sm="6">
-                <Card body>
-                  <CardTitle>Complete login with OpenID</CardTitle>
-                  <CardText>
-                    We need to finish connecting database with NUS OpenID.
-                  </CardText>
-                  <Button color="info">Edit</Button>
-                  <Button color="danger">Delete</Button>
-                </Card>
-              </Col>
-              <Col sm="6">
-                <Card body>
-                  <CardTitle>To-do card</CardTitle>
-                  <CardText>To-do task.</CardText>
-                  <Button>Edit</Button>
-                  <Button>Delete</Button>
-                </Card>
-              </Col>
-            </Row>
+            
+            <TodoGrid todos={this.props.group.todos} />
           </TabPane>
           <TabPane tabId="3">
             <Grid />

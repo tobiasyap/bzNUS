@@ -115,6 +115,7 @@ class App extends React.Component {
               group={this.state.groups.find(
                 g => g.group_id === this.state.selectedGroupID
               )}
+              onGroupUpdate={this.onGroupUpdate}
               onUnmount={this.onGroupPageUnmount}
             />
             <PrivateRoute
@@ -168,6 +169,43 @@ class App extends React.Component {
   onGroupPageUnmount = () => {
     // Reset sidebar group radio buttons
     this.setState({ selectedGroupID: -1 });
+  };
+
+  onGroupUpdate = group_id => {
+    fetch(`/api/groups/${group_id}`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": true
+      }
+    })
+      .then(res => {
+        if (
+          res.status === 404 ||
+          res
+            .json()
+            .user_ids.findIndex(id => id === this.state.user.user_id) === -1
+        ) {
+          // Remove removed group
+          let { groups } = this.state;
+          groups = groups.filter(g => g.group_id !== group_id);
+          this.setState({ groups });
+          this.fetchAuthenticatedUser(); // Update user group_ids
+          throw Error("Group no longer exists / User no longer in group");
+        }
+      })
+      .then(res => res.json())
+      .then(group => {
+        let { groups } = this.state;
+        const index = groups.findIndex(g => g.group_id === group_id);
+        groups[index] = group;
+        this.setState({ groups });
+      })
+      .catch(err => {
+        console.error(`Error fetching group ${group_id}`);
+      });
   };
 
   onGroupCreationButtonClick = () => {

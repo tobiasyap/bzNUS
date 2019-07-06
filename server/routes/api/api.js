@@ -112,7 +112,7 @@ router.post("/groups/:groupid/todos", async (req, res) => {
 
   // Check that group exists
   try {
-    await Group.findByGroupID(req.params.groupid);
+    await Group.findByGroupID(Number(req.params.groupid));
   } catch (err) {
     res.status(400).send("Specified group does not exist.");
     console.error(err);
@@ -120,7 +120,7 @@ router.post("/groups/:groupid/todos", async (req, res) => {
   }
 
   try {
-    const retTodo = await Todo.insert(req.params.groupid, reqTodo);
+    const retTodo = await Todo.insert(Number(req.params.groupid), reqTodo);
     res.send(retTodo);
   } catch (err) {
     res.status(500).send("Error inserting todo.");
