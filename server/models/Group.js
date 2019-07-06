@@ -27,7 +27,7 @@ function findByGroupID(group_id) {
           );
           const todos = await db.any(
             "SELECT * FROM todos WHERE todo_id = (SELECT todo_id FROM group_todos WHERE group_id = $1)",
-            group_id,
+            group_id
           );
           g.user_ids = user_ids;
           g.todos = todos;
@@ -60,13 +60,10 @@ function insert(group) {
 }
 
 function insertUserID(group_id, user_id) {
-  return db.one(
-    `BEGIN;
-        INSERT INTO group_users (group_id, user_id) VALUES ($1, $2);
-        SELECT * FROM group_users WHERE group_id = $1 AND user_id = $2;
-        COMMIT;`,
-    [group_id, user_id]
-  );
+  return db.none('INSERT INTO group_users (group_id, user_id) VALUES ($1, $2)', [group_id, user_id])
+  .then(() => {
+    db.one('SELECT * FROM group_users WHERE group_id = $1 AND user_id = $2', [group_id, user_id])
+  });
 }
 
 function updateName(group_id, name) {
@@ -80,20 +77,24 @@ function updateName(group_id, name) {
 
 function remove(group_id) {
   return db.tx(t => {
-    return t.batch([
-      t.none("DELETE FROM projectgroups WHERE group_id = $1", group_id),
-      t.none("SELECT * FROM projectgroups WHERE group_id = $1", group_id),
-      t.none("SELECT * FROM group_users WHERE group_id = $1", group_id)
-    ]);
+    return t
+      .none("DELETE FROM projectgroups WHERE group_id = $1", group_id)
+      .then(() =>
+        t.batch([
+          t.none("SELECT * FROM projectgroups WHERE group_id = $1", group_id),
+          t.none("SELECT * FROM group_users WHERE group_id = $1", group_id)
+        ])
+      );
   });
 }
 
 function removeUserID(user_id) {
   return db.tx(t => {
-    return t.batch([
-      t.none("DELETE FROM group_users WHERE user_id = $1", user_id),
-      t.none("SELECT * FROM group_users WHERE user_id = $1", user_id)
-    ]);
+    return t
+      .none("DELETE FROM group_users WHERE user_id = $1", user_id)
+      .then(() => {
+        t.none("SELECT * FROM group_users WHERE user_id = $1", user_id);
+      });
   });
 }
 

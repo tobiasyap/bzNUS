@@ -53,7 +53,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this.fetchAuthenticatedUser().then(() => {
-      this.fetchGroups();
+      this.fetchGroups().then(() => this.setState({ loaded: true }));
     });
   }
 
@@ -111,6 +111,10 @@ class App extends React.Component {
               exact
               path="/group"
               component={GroupPage}
+              user={this.state.user}
+              group={this.state.groups.find(
+                g => g.group_id === this.state.selectedGroupID
+              )}
               onUnmount={this.onGroupPageUnmount}
             />
             <PrivateRoute
@@ -135,18 +139,22 @@ class App extends React.Component {
 
   ListGroupButtons = props => {
     let groupButtons = [];
-    console.log(this.state.groups);
     for (const group of this.state.groups) {
       groupButtons.push(
         <ListGroupItem
           key={`lgi_${group.group_id}`}
-          tag="button"
-          onClick={() => {
-            this.setState({ selectedGroupID: group.group_id });
-          }}
-          active={this.state.selectedGroupID === group.group_id}
+          tag={Link}
+          exact
+          to="/group"
         >
-          {group.name}
+          <button
+            onClick={() => {
+              this.setState({ selectedGroupID: group.group_id });
+            }}
+            active={this.state.selectedGroupID === group.group_id}
+          >
+            {group.name}
+          </button>
         </ListGroupItem>
       );
     }
@@ -197,22 +205,17 @@ class App extends React.Component {
           authenticated: false,
           error: "Failed to authenticate user"
         });
-      })
-      .finally(() => {
-        this.setState({ loaded: true });
       });
   };
 
   fetchGroups = () => {
-    console.log(this.state.user.group_ids);
     if (!this.state.user.group_ids) {
       this.setState({ groups: [] });
-      return;
+      return new Promise((res, rej) => res("No groups"));
     }
     let groups = [];
-    console.log(this.state.user.group_ids);
     for (let group_id of this.state.user.group_ids) {
-      console.log("fetching: ", group_id);
+      console.log("fetching group", group_id);
       groups.push(
         fetch(`/api/groups/${group_id}`, {
           method: "GET",
@@ -229,7 +232,7 @@ class App extends React.Component {
           })
       );
     }
-    Promise.all(groups).then(groups => {
+    return Promise.all(groups).then(groups => {
       this.setState({ groups: groups });
     });
   };
