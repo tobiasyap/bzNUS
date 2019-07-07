@@ -23,7 +23,7 @@ class MemberList extends React.Component {
     for(const user of this.props.groupUsers) {
       items.push(
         <ListGroupItem key={`lgi_${user.user_id}`}>
-          {user.username}
+          {user.fullname} ({user.username}) 
         </ListGroupItem>
       );
     }
