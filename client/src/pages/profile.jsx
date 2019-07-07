@@ -56,31 +56,30 @@ class ProfilePage extends React.Component {
         nusnet_id: user.nusnet_id,
         fullname: user.fullname,
         timetableurl: user.timetableurl,
-        
+
         username: this.state.username === "" ? null : this.state.username,
         email: this.state.email === "" ? null : this.state.email
       })
     })
-    .then(res => {
-      console.log("response received:", res);
-      if(res.status === 200) {
-        // Update App User object
-        this.props.onUserChange(res.json());
-      }
-      else {
-        if(res.body === "Username already in use") {
-          const { validate } = this.state;
-          validate.usernameState = "bad";
-          this.setState({ validate });
-          return;
+      .then(res => {
+        console.log("response received:", res);
+        if (res.status === 200) {
+          // Update App User object
+          this.props.onUserChange(res.json());
+        } else {
+          if (res.body === "Username already in use") {
+            const { validate } = this.state;
+            validate.usernameState = "bad";
+            this.setState({ validate });
+            return;
+          }
+          throw new Error("Failed to update object");
         }
-        throw new Error("Failed to update object");
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      alert("Unexpected error. Please try again.");
-    })
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Unexpected error. Please try again.");
+      });
   };
 
   handleChange = async event => {
@@ -135,9 +134,7 @@ class ProfilePage extends React.Component {
                   this.handleChange(e);
                 }}
               />
-              <FormFeedback invalid>
-                Username already in use.
-              </FormFeedback>
+              <FormFeedback invalid>Username already in use.</FormFeedback>
             </Col>
           </FormGroup>
           <Button>Save</Button>

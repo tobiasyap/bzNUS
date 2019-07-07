@@ -27,7 +27,6 @@ function insert(group_id, todo) {
   return db.tx(t => {
     t.one("INSERT INTO todos (title, description) VALUES ($1, $2) RETURNING todo_id", [todo.title, todo.description])
     .then(row => {
-      console.log(row, row.todo_id);
       t.none("INSERT INTO group_todos (group_id, todo_id) VALUES ($1, $2)", [group_id, row.todo_id]);
       return row.todo_id;
     })

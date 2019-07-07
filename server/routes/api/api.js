@@ -130,10 +130,10 @@ router.post("/groups/:groupid/todos", async (req, res) => {
 });
 
 router.post("/groups/:groupid/users", async (req, res) => {
-  const user_id = req.body.user_id;
+  const { user_id, username } = req.body;
   const group_id = req.params.groupid;
-  if (!user_id) {
-    res.status(400).send("user_id not specified.");
+  if (!user_id && !username) {
+    res.status(400).send("Neither user_id nor username specified.");
     return;
   }
 
@@ -144,12 +144,26 @@ router.post("/groups/:groupid/users", async (req, res) => {
     console.error(err);
     return;
   }
-  try {
-    await User.findByUserID(user_id);
-  } catch (err) {
-    res.status(400).send("Specified user_id does not exist.");
-    console.error(err);
-    return;
+
+  if(user_id) {
+    try {
+      await User.findByUserID(user_id);
+    } catch (err) {
+      res.status(400).send("Specified user_id does not exist.");
+      console.error(err);
+      return;
+    }
+  }
+  else {
+    try {
+      const user = await User.findByUsername(username);
+      user_id = user.user_id;
+    }
+    catch(err) {
+      res.status(400).send("Specified username does not exist.");
+      console.error(err);
+      return;
+    }
   }
 
   try {

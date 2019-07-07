@@ -27,6 +27,12 @@ function findByNusnetID(nusnet_id) {
     .then(user => (user ? _attachGroupIDs(user) : null));
 }
 
+function findByUsername(username) {
+  return db
+    .one("SELECT * FROM users WHERE username = $1", username)
+    .then(user => (user ? _attachGroupIDs(user) : null));
+}
+
 function insert(u) {
   return db
     .one(
@@ -69,7 +75,7 @@ function update(u) {
             }
           )
           .then(() => {
-            return t.one("SELECT * FROM users WHERE user_id = $1", u.user_id)
+            return t.one("SELECT * FROM users WHERE user_id = $1", u.user_id);
           });
       });
     })
@@ -91,7 +97,11 @@ function updateTimetableURL(user_id, timetableurl) {
 }
 
 function _getGroupIDs(user_id) {
-  return db.map("SELECT group_id FROM group_users WHERE user_id = $1", user_id, row => row.group_id);
+  return db.map(
+    "SELECT group_id FROM group_users WHERE user_id = $1",
+    user_id,
+    row => row.group_id
+  );
 }
 
 async function _attachGroupIDs(user) {
@@ -108,6 +118,7 @@ async function _attachGroupIDs(user) {
 module.exports = {
   findByUserID: findByUserID,
   findByNusnetID: findByNusnetID,
+  findByUsername: findByUsername,
   insert: insert,
   update: update,
   updateTimetableURL: updateTimetableURL

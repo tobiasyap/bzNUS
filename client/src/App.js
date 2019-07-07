@@ -178,9 +178,7 @@ class App extends React.Component {
       .then(res => {
         if (
           res.status === 404 ||
-          res
-            .json()
-            .user_ids.findIndex(id => id === this.state.user.user_id) === -1
+          !res.json().user_ids.includes(this.state.user.user_id)
         ) {
           // Remove removed group
           let { groups } = this.state;
@@ -199,6 +197,7 @@ class App extends React.Component {
       })
       .catch(err => {
         console.error(`Error fetching group ${group_id}`);
+        console.error(err);
       });
   };
 
@@ -245,7 +244,6 @@ class App extends React.Component {
       this.setState({ groups: [] });
       return new Promise((res, rej) => res("No groups"));
     }
-    console.log(this.state.user.group_ids);
     let groups = [];
     for (let group_id of this.state.user.group_ids) {
       console.log("fetching group", group_id);

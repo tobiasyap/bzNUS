@@ -30,7 +30,6 @@ function findByGroupID(group_id) {
             group_id
           );
           g.user_ids = user_ids;
-          console.log("todos:", todos);
           g.todos = todos;
           resolve(g);
         } catch (err) {

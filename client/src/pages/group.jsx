@@ -17,6 +17,7 @@ import Grid from "../components/grid";
 import GroupSchedule from "../components/GroupSchedule";
 import MemberList from "../components/MemberList";
 import TodoPane from "../components/TodoPane";
+import UserAddForm from "../components/UserAddForm";
 
 export default class GroupPage extends React.Component {
   constructor(props) {
@@ -47,10 +48,8 @@ export default class GroupPage extends React.Component {
   render() {
     const group = this.getGroup();
 
-    if(!group || !this.userIn(group)) {
-      return (
-        <p>You are not authorised to view this group.</p>
-      );
+    if (!group || !this.userIn(group)) {
+      return <p>You are not authorised to view this group.</p>;
     }
 
     return (
@@ -120,6 +119,10 @@ export default class GroupPage extends React.Component {
             <Row>
               <Col sm="12">
                 <h6>View, add, and remove members</h6>
+                <UserAddForm
+                  group_id={group.group_id}
+                  onUpdate={this.props.onGroupUpdate}
+                />
                 <MemberList
                   user={this.props.user}
                   group={group}
@@ -134,17 +137,19 @@ export default class GroupPage extends React.Component {
   }
 
   getGroup = () => {
-    return this.props.groups.find(g => g.group_id === Number(this.props.match.params.groupid));  
+    return this.props.groups.find(
+      g => g.group_id === Number(this.props.match.params.groupid)
+    );
   };
 
-  userIn = (group) => {
+  userIn = group => {
     return group.user_ids.includes(this.props.user.user_id);
   };
 
   componentDidMount() {
     // Derive group from URL parameter
     const group = this.getGroup();
-    if(!group || !this.userIn(group)) {
+    if (!group || !this.userIn(group)) {
       return;
     }
 
@@ -177,5 +182,4 @@ export default class GroupPage extends React.Component {
   componentWillUnmount() {
     this.props.onUnmount();
   }
-
 }

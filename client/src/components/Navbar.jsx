@@ -50,32 +50,6 @@ export default class NavBar extends React.Component {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret>
-                  Groups
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem>
-                    CP2106
-                  </DropdownItem>
-                  <DropdownItem>
-                    IS1103
-                  </DropdownItem>
-                  <DropdownItem>
-                    The Best Project Group
-                  </DropdownItem>
-                  <DropdownItem tag={RRNavLink} exact to="/group">
-                    Group Page Example
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem>
-                    Create Group
-                  </DropdownItem>
-                  <DropdownItem>
-                    Edit Groups
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
               <NavItem>
                 <NavLink tag={RRNavLink} exact to="/profile">Profile</NavLink>
               </NavItem>
