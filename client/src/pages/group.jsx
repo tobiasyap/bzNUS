@@ -30,9 +30,10 @@ export default class GroupPage extends React.Component {
 
   static propTypes = {
     user: PropTypes.object.isRequired,
-    group: PropTypes.object.isRequired,
+    groups: PropTypes.array.isRequired,
     onUnmount: PropTypes.func.isRequired,
-    onGroupUpdate: PropTypes.func
+    onGroupUpdate: PropTypes.func,
+    match: PropTypes.object.isRequired
   };
 
   toggleTab = tab => {
@@ -44,6 +45,14 @@ export default class GroupPage extends React.Component {
   };
 
   render() {
+    const group = this.getGroup();
+
+    if(!group || !this.userIn(group)) {
+      return (
+        <p>You are not authorised to view this group.</p>
+      );
+    }
+
     return (
       <div>
         <Nav tabs>
@@ -64,7 +73,7 @@ export default class GroupPage extends React.Component {
                 this.toggleTab("2");
               }}
             >
-              To-Do
+              Todo
             </NavLink>
           </NavItem>
           <NavItem>
@@ -84,7 +93,7 @@ export default class GroupPage extends React.Component {
                 this.toggleTab("4");
               }}
             >
-              Team
+              Members
             </NavLink>
           </NavItem>
         </Nav>
@@ -92,15 +101,15 @@ export default class GroupPage extends React.Component {
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <h4>Welcome to Group Example Home Page</h4>
+                <h4>{`Welcome to the ${group.name} Home Page`}</h4>
               </Col>
             </Row>
             <GroupSchedule users={[]} />
           </TabPane>
           <TabPane tabId="2">
             <TodoPane
-              group_id={this.props.group.group_id}
-              todos={this.props.group.todos}
+              group_id={group.group_id}
+              todos={group.todos}
               onTodoUpdate={this.props.onGroupUpdate}
             />
           </TabPane>
@@ -110,11 +119,10 @@ export default class GroupPage extends React.Component {
           <TabPane tabId="4">
             <Row>
               <Col sm="12">
-                <h4>Data from group api displaying member data</h4>
-                <h6>View, add, remove members</h6>
+                <h6>View, add, and remove members</h6>
                 <MemberList
                   user={this.props.user}
-                  group={this.props.group}
+                  group={group}
                   groupUsers={this.state.groupUsers}
                 />
               </Col>
@@ -125,9 +133,23 @@ export default class GroupPage extends React.Component {
     );
   }
 
+  getGroup = () => {
+    return this.props.groups.find(g => g.group_id === Number(this.props.match.params.groupid));  
+  };
+
+  userIn = (group) => {
+    return group.user_ids.includes(this.props.user.user_id);
+  };
+
   componentDidMount() {
+    // Derive group from URL parameter
+    const group = this.getGroup();
+    if(!group || !this.userIn(group)) {
+      return;
+    }
+
     let users = [];
-    for (let user_id of this.props.group.user_ids) {
+    for (let user_id of group.user_ids) {
       console.log("fetching user", user_id);
       users.push(
         fetch(`/api/users/${user_id}`, {
@@ -155,4 +177,5 @@ export default class GroupPage extends React.Component {
   componentWillUnmount() {
     this.props.onUnmount();
   }
+
 }

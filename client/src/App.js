@@ -57,6 +57,10 @@ class App extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    this.setState({ loaded: false });
+  }
+
   render() {
     const NavigationBar = withRouter(NavBar);
     const AutoSideBar = withRouter(SideBar);
@@ -109,12 +113,10 @@ class App extends React.Component {
             <PrivateRoute
               authed={authenticated}
               exact
-              path="/group"
+              path="/group/:groupid"
               component={GroupPage}
               user={this.state.user}
-              group={this.state.groups.find(
-                g => g.group_id === this.state.selectedGroupID
-              )}
+              groups={this.state.groups}
               onGroupUpdate={this.onGroupUpdate}
               onUnmount={this.onGroupPageUnmount}
             />
@@ -146,16 +148,9 @@ class App extends React.Component {
           key={`lgi_${group.group_id}`}
           tag={Link}
           exact
-          to="/group"
+          to={`/group/${group.group_id}`}
         >
-          <button
-            onClick={() => {
-              this.setState({ selectedGroupID: group.group_id });
-            }}
-            active={this.state.selectedGroupID === group.group_id}
-          >
-            {group.name}
-          </button>
+          {group.name}
         </ListGroupItem>
       );
     }
@@ -167,8 +162,7 @@ class App extends React.Component {
   };
 
   onGroupPageUnmount = () => {
-    // Reset sidebar group radio buttons
-    this.setState({ selectedGroupID: -1 });
+    // TODO: reset sidebar group radio buttons
   };
 
   onGroupUpdate = group_id => {
@@ -251,6 +245,7 @@ class App extends React.Component {
       this.setState({ groups: [] });
       return new Promise((res, rej) => res("No groups"));
     }
+    console.log(this.state.user.group_ids);
     let groups = [];
     for (let group_id of this.state.user.group_ids) {
       console.log("fetching group", group_id);

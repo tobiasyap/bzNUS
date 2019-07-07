@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
+import moment from 'moment';
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -20,11 +22,11 @@ const TodoGrid = (props) => {
   let gridItems = [];
   for(const todo of props.todos) {
     gridItems.push(
-      <Grid item xs={6} key={`gi_${todo.todo_id}`}>
+      <Grid item xs={3} key={`gi_${todo.todo_id}`}>
         <Paper className={classes.paper}>
-          {todo.title}
-          {todo.description}
-          {todo.created_at}
+          <h5>{todo.title}</h5>
+          <p>{todo.description}</p>
+          <p>{moment(todo.created_at).format("ddd, DD/MM/YY h:mm:ss a")}</p>
         </Paper>
       </Grid>
     );
