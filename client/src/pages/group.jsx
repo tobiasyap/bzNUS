@@ -108,7 +108,7 @@ export default class GroupPage extends React.Component {
             <TodoPane
               group_id={group.group_id}
               todos={group.todos}
-              onTodoUpdate={this.props.onGroupUpdate}
+              onTodoUpdate={() => this.props.onGroupUpdate(group.group_id)}
             />
           </TabPane>
           <TabPane tabId="3">
@@ -120,7 +120,7 @@ export default class GroupPage extends React.Component {
                 <h6>View, add, and remove members</h6>
                 <UserAddForm
                   group_id={group.group_id}
-                  onUpdate={this.props.onGroupUpdate}
+                  onUpdate={() => this.props.onGroupUpdate(group.group_id)}
                 />
                 <MemberList
                   user={this.props.user}

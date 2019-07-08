@@ -27,7 +27,8 @@ class TodoCreationModal extends React.Component {
   static propTypes = {
     group_id: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
-    onToggle: PropTypes.func.isRequired
+    onToggle: PropTypes.func.isRequired,
+    onCreate: PropTypes.func.isRequired
   };
 
   toggle = () => {
@@ -87,10 +88,10 @@ class TodoCreationModal extends React.Component {
     );
   }
 
-  onSubmit = () => {
+  onSubmit = async () => {
     this.setState({ loading: true });
     try {
-      fetch(`/api/groups/${this.props.group_id}/todos`, {
+      await fetch(`/api/groups/${this.props.group_id}/todos`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -104,6 +105,10 @@ class TodoCreationModal extends React.Component {
         })
       });
       this.props.onCreate(); // Update group state
+    }
+    catch(err) {
+      console.error(`Error inserting todo '${this.state.title}'`);
+      console.error(err);
     }
     finally {
       this.setState({ loading: false });

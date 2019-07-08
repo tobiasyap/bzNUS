@@ -30,7 +30,6 @@ class App extends React.Component {
     this.state = {
       user: {},
       groups: [],
-      selectedGroupID: -1,
       error: null,
       authenticated: false,
       loaded: false, // only render after authentication is complete
@@ -63,7 +62,6 @@ class App extends React.Component {
     const ListGroupButtons = this.ListGroupButtons;
 
     const { authenticated, loaded } = this.state;
-    const { location } = this.props;
 
     if (!loaded) return null;
     return (
@@ -165,6 +163,7 @@ class App extends React.Component {
   };
 
   onGroupUpdate = group_id => {
+    console.log(`Updating group ${group_id}`);
     fetch(`/api/groups/${group_id}`, {
       method: "GET",
       credentials: "include",
@@ -175,24 +174,27 @@ class App extends React.Component {
       }
     })
       .then(res => {
-        if (
-          res.status === 404 ||
-          !res.json().user_ids.includes(this.state.user.user_id)
-        ) {
-          // Remove removed group
-          let { groups } = this.state;
-          groups = groups.filter(g => g.group_id !== group_id);
-          this.setState({ groups });
-          this.fetchAuthenticatedUser(); // Update user group_ids
-          throw Error("Group no longer exists / User no longer in group");
+        if(res.status === 404) {
+          this.removeGroupFromState(group_id);
+          throw Error("Group no longer exists");
         }
+        return res;
       })
       .then(res => res.json())
       .then(group => {
-        let { groups } = this.state;
-        const index = groups.findIndex(g => g.group_id === group_id);
-        groups[index] = group;
-        this.setState({ groups });
+        if(!group.user_ids.includes(this.state.user.user_id)) {
+          this.removeGroupFromState(group_id);
+          throw Error("User no longer in group");
+        }
+        return group;
+      })
+      .then(group => {
+        console.log(group);
+        // Update group
+        let upGroups = [...this.state.groups]; // Copy groups array
+        const index = upGroups.findIndex(g => g.group_id === group_id);
+        upGroups[index] = group;
+        this.setState({ groups: upGroups });
       })
       .catch(err => {
         console.error(`Error fetching group ${group_id}`);
@@ -265,6 +267,13 @@ class App extends React.Component {
     return Promise.all(groups).then(groups => {
       this.setState({ groups: groups });
     });
+  };
+
+  removeGroupFromState = (group_id) => {
+    let { groups } = this.state;
+    groups = groups.filter(g => g.group_id !== group_id);
+    this.setState({ groups });
+    this.fetchAuthenticatedUser(); // Update user group_ids
   };
 }
 
