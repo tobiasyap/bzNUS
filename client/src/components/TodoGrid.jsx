@@ -5,19 +5,17 @@ import Grid from '@material-ui/core/Grid';
 
 import moment from 'moment';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-}));
-
 const TodoGrid = (props) => {
-  const classes = useStyles();
+  const classes = makeStyles(theme => ({
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    },
+  }))();
   
   let gridItems = [];
   for(const todo of props.todos) {
