@@ -46,8 +46,8 @@ function insert(u) {
         timetableurl: u.timetableurl
       }
     )
-    .then(user_id => {
-      return db.one("SELECT * FROM users WHERE user_id = $1", user_id);
+    .then(user => {
+      return db.one("SELECT * FROM users WHERE user_id = $1", user.user_id);
     });
 }
 

@@ -32,7 +32,6 @@ export default class GroupPage extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     groups: PropTypes.array.isRequired,
-    onUnmount: PropTypes.func.isRequired,
     onGroupUpdate: PropTypes.func,
     match: PropTypes.object.isRequired
   };
@@ -177,9 +176,5 @@ export default class GroupPage extends React.Component {
       .catch(err => {
         alert("Error fetching group members", err);
       });
-  }
-
-  componentWillUnmount() {
-    this.props.onUnmount();
   }
 }

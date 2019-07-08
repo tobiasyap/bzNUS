@@ -182,10 +182,10 @@ router.put("/users/:userid", async (req, res) => {
   const schema = {
     user_id: Joi.number().integer().required(),
     nusnet_id: Joi.string(),
-    username: Joi.string(),
-    fullname: Joi.string(),
-    email: Joi.string(),
-    timetableurl: Joi.string()
+    username: Joi.string().allow(null),
+    fullname: Joi.string().allow(null),
+    email: Joi.string().allow(null),
+    timetableurl: Joi.string().allow(null)
   };
   const validation = Joi.validate(req.body, schema);
   if (validation.error) {

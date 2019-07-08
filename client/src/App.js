@@ -57,10 +57,6 @@ class App extends React.Component {
     });
   }
 
-  componentWillUnmount() {
-    this.setState({ loaded: false });
-  }
-
   render() {
     const NavigationBar = withRouter(NavBar);
     const AutoSideBar = withRouter(SideBar);
@@ -82,7 +78,7 @@ class App extends React.Component {
                 >
                   Create a group
                 </ListGroupItem>
-                <ListGroupButtons />
+                <ListGroupButtons groups={this.state.groups} />
               </ListGroup>
             </div>
           }
@@ -118,7 +114,6 @@ class App extends React.Component {
               user={this.state.user}
               groups={this.state.groups}
               onGroupUpdate={this.onGroupUpdate}
-              onUnmount={this.onGroupPageUnmount}
             />
             <PrivateRoute
               authed={authenticated}
@@ -134,6 +129,10 @@ class App extends React.Component {
             isOpen={this.state.showGroupCreationModal}
             onToggle={this.onGroupCreationToggle}
             user_id={this.state.user.user_id}
+            onCreation={() => {
+              this.fetchAuthenticatedUser()
+              .then(() => this.fetchGroups());
+            }}
           />
         </AutoSideBar>
       </Router>
@@ -142,7 +141,7 @@ class App extends React.Component {
 
   ListGroupButtons = props => {
     let groupButtons = [];
-    for (const group of this.state.groups) {
+    for (const group of props.groups) {
       groupButtons.push(
         <ListGroupItem
           key={`lgi_${group.group_id}`}

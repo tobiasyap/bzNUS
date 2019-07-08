@@ -26,7 +26,8 @@ class GroupCreationModal extends React.Component {
   static propTypes = {
     user_id: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
-    onToggle: PropTypes.func.isRequired
+    onToggle: PropTypes.func.isRequired,
+    onCreation: PropTypes.func.isRequired
   };
 
   toggle = () => {
@@ -90,7 +91,7 @@ class GroupCreationModal extends React.Component {
           name: this.state.name,
           user_ids: [this.props.user_id]
         })
-      });
+      }).then(this.props.onCreation());
     }
     finally {
       this.setState({ loading: false });
