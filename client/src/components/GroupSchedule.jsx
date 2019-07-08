@@ -5,7 +5,8 @@ import { Spinner } from "reactstrap";
 import Scheduler, {
   SchedulerData,
   ViewTypes,
-  DATE_FORMAT
+  DATE_FORMAT,
+  DATETIME_FORMAT
 } from "react-big-scheduler";
 import "react-big-scheduler/lib/css/style.css";
 import moment from "moment";
@@ -15,14 +16,26 @@ export default class GroupSchedule extends Component {
     super(props);
     this.state = {
       weekSchedulerData: null,
-      loaded: false
+      loaded: false,
+      userTimetables: {}
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.fetchAndUpdateSchedulerData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if(this.props.users !== prevProps.users) {
+      this.fetchAndUpdateSchedulerData();
+    }
+  }
+
+  fetchAndUpdateSchedulerData = async () => {
     const { users } = this.props;
     const userTimetables = await this.fetchUserTimetables(users);
-    let resouces = this.usersToResources(users);
+    this.setState({ userTimetables });
+    let resources = this.usersToResources(users);
 
     const firstDayOfWeekMoment = moment().startOf("week");
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
@@ -30,13 +43,12 @@ export default class GroupSchedule extends Component {
     for (const day of days) {
       weekEvents[day] = [];
       for (const { user_id } of users) {
-        weekEvents[day].push(
-          this.getResourceTimetableEventsOnDay(
-            userTimetables[user_id],
-            firstDayOfWeekMoment.clone().isoWeekday(day),
-            user_id
-          )
+        const userEventsOnDay = this.getResourceTimetableEventsOnDay(
+          userTimetables[user_id],
+          firstDayOfWeekMoment.clone().isoWeekday(day),
+          user_id
         );
+        weekEvents[day] = weekEvents[day].concat(userEventsOnDay);
       }
     }
 
@@ -49,12 +61,12 @@ export default class GroupSchedule extends Component {
           .format(DATE_FORMAT),
         ViewTypes.Day
       );
-      weekSchedulerData[day].setResources(resouces);
+      weekSchedulerData[day].setResources(resources);
       weekSchedulerData[day].setEvents(weekEvents[day]);
     }
 
     this.setState({ loaded: true, weekSchedulerData });
-  }
+  };
 
   fetchUserTimetables = async users => {
     let timetables = {};
@@ -70,7 +82,7 @@ export default class GroupSchedule extends Component {
             "Content-Type": "application/json",
             "Access-Control-Allow-Credentials": true
           }
-        });
+        }).then(res => res.json());
         timetables[user.user_id] = timetable;
       } catch (err) {
         timetables[user.user_id] = null;
@@ -84,13 +96,13 @@ export default class GroupSchedule extends Component {
     for (let i in users.filter(user => user.timetableurl)) {
       resources.push({
         id: users[i].user_id,
-        name: users[i].username || users[i].fullname
+        name: users[i].fullname || users[i].username || `User ${i}`
       });
     }
     for (let i in users.filter(user => !user.timetableurl)) {
       resources.push({
         id: users[i].user_id,
-        name: users[i].username || users[i].fullname
+        name: users[i].fullname || users[i].username || `User ${i}`
       });
     }
     return resources;
@@ -101,7 +113,7 @@ export default class GroupSchedule extends Component {
     let i = 1;
     for (let [modName, modData] of Object.entries(timetable)) {
       for (let lesson of modData.filter(
-        m => m.day === dayMoment.format("DDDD")
+        m => m.day === dayMoment.format("dddd")
       )) {
         events.push({
           id: i,
@@ -109,16 +121,19 @@ export default class GroupSchedule extends Component {
           end: dayMoment
             .clone()
             .add(lesson.endTime / 100, "hours")
-            .format(DATE_FORMAT),
-          resourceId: resourceId
+            .format(DATETIME_FORMAT),
+          resourceId: resourceId,
+          title: `${modName} ${lesson.lessonType}`
         });
         i++;
       }
     }
     events.sort((a, b) => a.start.diff(b.start));
-    for (let e of events) {
-      e.start = e.start.format(DATE_FORMAT);
+    for (let i in events) {
+      events[i].start = events[i].start.format(DATETIME_FORMAT);
+      events[i].id = i;
     }
+    return events;
   };
 
   render() {
@@ -137,6 +152,8 @@ export default class GroupSchedule extends Component {
         <Scheduler schedulerData={weekSchedulerData["Wednesday"]} />
         <Scheduler schedulerData={weekSchedulerData["Thursday"]} />
         <Scheduler schedulerData={weekSchedulerData["Friday"]} />
+        <h1>NUSMods JSON data</h1>
+        <p>{JSON.stringify(this.state.userTimetables)}</p>
       </div>
     );
   }
