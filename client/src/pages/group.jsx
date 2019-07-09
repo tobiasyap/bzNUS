@@ -99,7 +99,7 @@ export default class GroupPage extends React.Component {
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <h4>{`Welcome to the ${group.name} Home Page`}</h4>
+                <h3>{`Welcome to the ${group.name} Home Page`}</h3>
               </Col>
             </Row>
             <GroupSchedule users={this.state.groupUsers} />

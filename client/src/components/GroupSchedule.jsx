@@ -6,7 +6,8 @@ import Scheduler, {
   SchedulerData,
   ViewTypes,
   DATE_FORMAT,
-  DATETIME_FORMAT
+  DATETIME_FORMAT,
+  DemoData
 } from "react-big-scheduler";
 import "react-big-scheduler/lib/css/style.css";
 import moment from "moment";
@@ -26,7 +27,7 @@ export default class GroupSchedule extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(this.props.users !== prevProps.users) {
+    if (this.props.users !== prevProps.users) {
       this.fetchAndUpdateSchedulerData();
     }
   }
@@ -37,7 +38,7 @@ export default class GroupSchedule extends Component {
     this.setState({ userTimetables });
     let resources = this.usersToResources(users);
 
-    const firstDayOfWeekMoment = moment().startOf("week");
+    const firstDayOfWeekMoment = moment().startOf("isoWeek");
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     let weekEvents = {};
     for (const day of days) {
@@ -59,7 +60,15 @@ export default class GroupSchedule extends Component {
           .clone()
           .isoWeekday(day)
           .format(DATE_FORMAT),
-        ViewTypes.Day
+        ViewTypes.Day,
+        false,
+        false, {
+          startResizable: false,
+          endResizable: false,
+          movable: false,
+          creatable: false,
+          resourceName: "Member Name"
+        }
       );
       weekSchedulerData[day].setResources(resources);
       weekSchedulerData[day].setEvents(weekEvents[day]);
@@ -138,7 +147,7 @@ export default class GroupSchedule extends Component {
 
   render() {
     const { weekSchedulerData, loaded } = this.state;
-    if(!loaded) {
+    if (!loaded) {
       return (
         <div>
           <Spinner color="primary" />
@@ -147,16 +156,75 @@ export default class GroupSchedule extends Component {
     }
     return (
       <div>
-        <Scheduler schedulerData={weekSchedulerData["Monday"]} />
-        <Scheduler schedulerData={weekSchedulerData["Tuesday"]} />
-        <Scheduler schedulerData={weekSchedulerData["Wednesday"]} />
-        <Scheduler schedulerData={weekSchedulerData["Thursday"]} />
-        <Scheduler schedulerData={weekSchedulerData["Friday"]} />
+        <Scheduler {...this.makeSchedulerProps("Monday")} />
+        <Scheduler {...this.makeSchedulerProps("Tuesday")} />
+        <Scheduler {...this.makeSchedulerProps("Wednesday")} />
+        <Scheduler {...this.makeSchedulerProps("Thursday")} />
+        <Scheduler {...this.makeSchedulerProps("Friday")} />
         <h1>NUSMods JSON data</h1>
         <p>{JSON.stringify(this.state.userTimetables)}</p>
       </div>
     );
   }
+
+  // Props for Scheduler
+  prevClickFunc = data => {
+    return schedulerData => {
+      // Disable date changing
+      // schedulerData.prev();
+      schedulerData.setEvents(data.events);
+      this.setState({
+        viewModel: schedulerData
+      });
+    };
+  };
+  nextClickFunc = data => {
+    return schedulerData => {
+      // Disable date changing
+      // schedulerData.next();
+      schedulerData.setEvents(data.events);
+      this.setState({
+        viewModel: schedulerData
+      });
+    };
+  };
+  onSelectDateFunc = data => {
+    return (schedulerData, date) => {
+      // Disable date changing
+      // schedulerData.setDate(date);
+      schedulerData.setEvents(data.events);
+      this.setState({
+        viewModel: schedulerData
+      });
+    };
+  };
+  onViewChangeFunc = data => {
+    return (schedulerData, view) => {
+      // Disable view changing
+      // schedulerData.setViewType(view.viewType, view.showAgenda, view.isEventPerspective);
+      schedulerData.setEvents(data.events);
+      this.setState({
+        viewModel: schedulerData
+      });
+    };
+  };
+  eventItemClick = (schedulerData, event) => {
+    alert(
+      `You just clicked an event: {id: ${event.id}, title: ${event.title}}`
+    );
+  };
+  makeSchedulerProps = day => {
+    const { weekSchedulerData } = this.state;
+    return {
+      schedulerData: weekSchedulerData[day],
+      prevClick: this.prevClickFunc(weekSchedulerData[day]),
+      nextClick: this.nextClickFunc(weekSchedulerData[day]),
+      onSelectDate: this.onSelectDateFunc(weekSchedulerData[day]),
+      onViewChange: this.onViewChangeFunc(weekSchedulerData[day]),
+      eventItemClick: this.eventItemClick,
+      leftCustomHeader: <h4>{day}</h4>
+    };
+  };
 }
 
 GroupSchedule.propTypes = {

@@ -8,6 +8,8 @@ import {
   Redirect,
   withRouter
 } from "react-router-dom";
+import { DragDropContext } from "react-dnd";
+import HTML5Backend from 'react-dnd-html5-backend'
 
 import { ButtonGroup, Button, ListGroup, ListGroupItem } from "reactstrap";
 
@@ -277,4 +279,4 @@ class App extends React.Component {
   };
 }
 
-export default App;
+export default DragDropContext(HTML5Backend)(App);
