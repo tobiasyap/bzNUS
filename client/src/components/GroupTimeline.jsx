@@ -153,6 +153,7 @@ class GroupTimeline extends React.Component {
             endHour
           )}
         />
+        <p> </p>
         <Timeline
           {...this.makeTimelineProps(
             weekTimelineData,
@@ -161,6 +162,7 @@ class GroupTimeline extends React.Component {
             endHour
           )}
         />
+        <p> </p>
         <Timeline
           {...this.makeTimelineProps(
             weekTimelineData,
@@ -169,6 +171,7 @@ class GroupTimeline extends React.Component {
             endHour
           )}
         />
+        <p> </p>
         <Timeline
           {...this.makeTimelineProps(
             weekTimelineData,
@@ -177,6 +180,7 @@ class GroupTimeline extends React.Component {
             endHour
           )}
         />
+        <p> </p>
         <Timeline
           {...this.makeTimelineProps(
             weekTimelineData,
@@ -185,16 +189,30 @@ class GroupTimeline extends React.Component {
             endHour
           )}
         />
+        <p> </p>
       </div>
     );
   }
 
   makeTimelineProps = (weekTimelineData, day, startHour, endHour) => {
+    const minTime = weekTimelineData[day].dayMoment.clone().hour(startHour);
+    const maxTime = weekTimelineData[day].dayMoment.clone().hour(endHour);
     return {
       groups: weekTimelineData[day].groups,
       items: weekTimelineData[day].items,
-      defaultTimeStart: weekTimelineData[day].dayMoment.clone().hour(startHour),
-      defaultTimeEnd: weekTimelineData[day].dayMoment.clone().hour(endHour)
+      defaultTimeStart: minTime,
+      defaultTimeEnd: maxTime,
+      onTimeChange: (visibleTimeStart, visibleTimeEnd, updateScrollCanvas) => {
+        if (visibleTimeStart < minTime && visibleTimeEnd > maxTime) {
+          updateScrollCanvas(minTime, maxTime)
+        } else if (visibleTimeStart < minTime) {
+          updateScrollCanvas(minTime, minTime + (visibleTimeEnd - visibleTimeStart))
+        } else if (visibleTimeEnd > maxTime) {
+          updateScrollCanvas(maxTime - (visibleTimeEnd - visibleTimeStart), maxTime)
+        } else {
+          updateScrollCanvas(visibleTimeStart, visibleTimeEnd)
+        }
+      }
     };
   };
 
