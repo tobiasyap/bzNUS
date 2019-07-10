@@ -279,4 +279,5 @@ class App extends React.Component {
   };
 }
 
-export default DragDropContext(HTML5Backend)(App);
+// export default DragDropContext(HTML5Backend)(App);
+export default App;

@@ -1,18 +1,20 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Spinner } from "reactstrap";
+import { DragDropContext } from "react-dnd";
+import HTML5Backend from 'react-dnd-html5-backend';
 
+import { Spinner } from "reactstrap";
 import Scheduler, {
   SchedulerData,
   ViewTypes,
   DATE_FORMAT,
   DATETIME_FORMAT,
-  DemoData
 } from "react-big-scheduler";
 import "react-big-scheduler/lib/css/style.css";
 import moment from "moment";
+import DemoScheduler from "./DemoScheduler";
 
-export default class GroupSchedule extends Component {
+class GroupSchedule extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -70,6 +72,7 @@ export default class GroupSchedule extends Component {
           resourceName: "Member Name"
         }
       );
+      weekSchedulerData[day].localeMoment.locale('en');
       weekSchedulerData[day].setResources(resources);
       weekSchedulerData[day].setEvents(weekEvents[day]);
     }
@@ -138,7 +141,7 @@ export default class GroupSchedule extends Component {
       }
     }
     events.sort((a, b) => a.start.diff(b.start));
-    for (let i in events) {
+    for (let i = 0; i < events.length; i++) {
       events[i].start = events[i].start.format(DATETIME_FORMAT);
       events[i].id = i;
     }
@@ -161,6 +164,7 @@ export default class GroupSchedule extends Component {
         <Scheduler {...this.makeSchedulerProps("Wednesday")} />
         <Scheduler {...this.makeSchedulerProps("Thursday")} />
         <Scheduler {...this.makeSchedulerProps("Friday")} />
+        <DemoScheduler />
         <h1>NUSMods JSON data</h1>
         <p>{JSON.stringify(this.state.userTimetables)}</p>
       </div>
@@ -230,3 +234,5 @@ export default class GroupSchedule extends Component {
 GroupSchedule.propTypes = {
   users: PropTypes.array.isRequired
 };
+
+export default DragDropContext(HTML5Backend)(GroupSchedule);

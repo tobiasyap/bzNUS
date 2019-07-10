@@ -15,6 +15,7 @@ import {
 
 import Grid from "../components/grid";
 import GroupSchedule from "../components/GroupSchedule";
+import GroupTimeline from "../components/GroupTimeline";
 import MemberList from "../components/MemberList";
 import TodoPane from "../components/TodoPane";
 import UserAddForm from "../components/UserAddForm";
@@ -102,7 +103,7 @@ export default class GroupPage extends React.Component {
                 <h3>{`Welcome to the ${group.name} Home Page`}</h3>
               </Col>
             </Row>
-            <GroupSchedule users={this.state.groupUsers} />
+            <GroupTimeline users={this.state.groupUsers} />
           </TabPane>
           <TabPane tabId="2">
             <TodoPane
