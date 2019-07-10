@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 
 import Grid from "../components/grid";
-import GroupSchedule from "../components/GroupSchedule";
+import DemoTimeline from "../components/DemoTimeline";
 import GroupTimeline from "../components/GroupTimeline";
 import MemberList from "../components/MemberList";
 import TodoPane from "../components/TodoPane";

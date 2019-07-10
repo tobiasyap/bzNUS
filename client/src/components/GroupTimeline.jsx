@@ -193,8 +193,8 @@ class GroupTimeline extends React.Component {
     return {
       groups: weekTimelineData[day].groups,
       items: weekTimelineData[day].items,
-      defaultTimeStart: weekTimelineData[day].dayMoment.hour(startHour),
-      defaultTimeEnd: weekTimelineData[day].dayMoment.hour(endHour)
+      defaultTimeStart: weekTimelineData[day].dayMoment.clone().hour(startHour),
+      defaultTimeEnd: weekTimelineData[day].dayMoment.clone().hour(endHour)
     };
   };
 
