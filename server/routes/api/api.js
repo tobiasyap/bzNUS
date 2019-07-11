@@ -130,7 +130,7 @@ router.post("/groups/:groupid/todos", async (req, res) => {
 });
 
 router.post("/groups/:groupid/users", async (req, res) => {
-  const { user_id, username } = req.body;
+  let { user_id, username } = req.body;
   const group_id = req.params.groupid;
   if (!user_id && !username) {
     res.status(400).send("Neither user_id nor username specified.");
