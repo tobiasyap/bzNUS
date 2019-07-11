@@ -22,8 +22,7 @@ class NusModsPage extends Component {
 
     this.state = {
       newTimetableURL: "",
-      alert: "",
-      error: null
+      alert: null
     };
   }
 
@@ -51,19 +50,25 @@ class NusModsPage extends Component {
       .then(res => {
         if (res.status === 200) {
           this.setState({
-            alert: "Successfully updated timetable.",
-            error: null
+            alert: {
+              message: "NUSMods data synced. Note: if you change your timetable in NUSMods, you must sync again.",
+              success: true
+            }
           });
-          // Update app User object
-          this.props.onUserChange(res.json());
         } else {
           throw new Error("Failed to update timetableurl");
         }
+        return res;
       })
+      .then(res => res.json())
+      .then(user => this.props.onUserChange(user)) // Update app User object
       .catch(err => {
+        console.error(err);
         this.setState({
-          alert: "Whoops! Error updating timetable.",
-          error: err
+          alert: {
+            message: "Whoops! Error syncing with NUSMods.",
+            success: false
+          }
         });
       });
   };
@@ -90,8 +95,8 @@ class NusModsPage extends Component {
         </Container>
         <div>
           {this.state.alert && (
-            <Alert color={this.state.error ? "danger" : "success"}>
-              {this.state.alert}
+            <Alert color={this.state.alert.success === true ? "success" : "danger"}>
+              {this.state.alert.message}
             </Alert>
           )}
         </div>

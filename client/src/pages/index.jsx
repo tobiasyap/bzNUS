@@ -9,11 +9,11 @@ export default class HomePage extends React.Component {
       username: PropTypes.string,
       fullname: PropTypes.string,
       email: PropTypes.string,
-      timtableurl: PropTypes.string,
-      user_id: PropTypes.number,
+      timetableurl: PropTypes.string,
+      user_id: PropTypes.number.isRequired,
       nusnet_id: PropTypes.string,
       group_ids: PropTypes.array
-    })
+    }).isRequired
   };
 
   constructor(props) {

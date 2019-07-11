@@ -85,13 +85,12 @@ function update(u) {
 function updateTimetableURL(user_id, timetableurl) {
   return db
     .tx(t => {
-      return t.batch([
-        t.none("UPDATE users SET timetableurl = $1 WHERE user_id = $2", [
+      return t
+        .none("UPDATE users SET timetableurl = $1 WHERE user_id = $2", [
           timetableurl,
           user_id
-        ]),
-        t.one("SELECT * FROM users WHERE user_id = $1", user_id)
-      ]);
+        ])
+        .then(() => t.one("SELECT * FROM users WHERE user_id = $1", user_id));
     })
     .then(user => _attachGroupIDs(user));
 }
