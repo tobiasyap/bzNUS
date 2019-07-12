@@ -4,9 +4,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
 import moment from "moment";
@@ -14,9 +12,6 @@ import moment from "moment";
 const styles = theme => ({
   root: {
     flexGrow: 1
-  },
-  button: {
-    margin: theme.spacing(1)
   },
   card: {
     minWidth: 275
@@ -29,37 +24,10 @@ const styles = theme => ({
   }
 });
 
-class TodoGrid extends React.Component {
+class TodoDoneGrid extends React.Component {
   static propTypes = {
     todos: PropTypes.array.isRequired,
-    onUpdate: PropTypes.func,
     classes: PropTypes.object.isRequired
-  };
-
-  onDoneClick = (todo_id) => {
-    fetch(`/api/todos/${todo_id}/isdone`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Credentials": true
-      },
-      body: JSON.stringify({
-        is_done: true
-      })
-    })
-    .then(res => {
-      if(res.status === 200) {
-        this.props.onUpdate();
-        return;
-      }
-      throw Error("Failed to update Todo as done");
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Unexpected error. Please try again.");
-    })
   };
 
   render() {
@@ -80,9 +48,6 @@ class TodoGrid extends React.Component {
                 {moment(todo.created_at).format("ddd, DD/MM/YY h:mma")}
               </Typography>
             </CardContent>
-            <CardActions>
-              <Button size="small" onClick={() => this.onDoneClick(todo.todo_id)}>Mark as Done</Button>
-            </CardActions>
           </Card>
         </Grid>
       );
@@ -95,6 +60,6 @@ class TodoGrid extends React.Component {
       </div>
     );
   }
-};
+}
 
-export default withStyles(styles)(TodoGrid);
+export default withStyles(styles)(TodoDoneGrid);

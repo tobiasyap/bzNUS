@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Row, Button } from "reactstrap";
 
 import TodoGrid from "./TodoGrid";
+import TodoDoneGrid from "./TodoDoneGrid";
 import TodoCreationModal from "./TodoCreationModal";
 
 class TodoPane extends React.Component {
@@ -20,6 +21,8 @@ class TodoPane extends React.Component {
   };
 
   render() {
+    const undoneTodos = this.props.todos.filter(todo => !todo.is_done);
+    const doneTodos = this.props.todos.filter(todo => todo.is_done);
     return (
       <div>
         <Row>
@@ -27,7 +30,10 @@ class TodoPane extends React.Component {
             Create
           </Button>
         </Row>
-        <TodoGrid todos={this.props.todos} onUpdate={this.props.onTodoUpdate} />
+        <h5>Undone</h5>
+        <TodoGrid todos={undoneTodos} onUpdate={this.props.onTodoUpdate} />
+        <h5>Done</h5>
+        <TodoDoneGrid todos={doneTodos} />
         <TodoCreationModal
           group_id={this.props.group_id}
           isOpen={this.state.showTodoCreationModal}
