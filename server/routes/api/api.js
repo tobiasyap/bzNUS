@@ -327,6 +327,28 @@ router.put("/todos/:todoid", async (req, res) => {
   }
 });
 
+router.put("/todos/:todoid/isdone", async (req, res) => {
+  const schema = {
+    is_done: Joi.boolean().required()
+  };
+  const validation = Joi.validate(req.body, schema);
+  if (validation.error) {
+    res.status(400).send(validation.error);
+    console.error(validation);
+    return;
+  }
+  
+  try {
+    const retTodo = await Todo.updateDone(Number(req.params.todoid), Boolean(req.body.is_done));
+    res.send(retTodo);
+  }
+  catch(err) {
+    console.error(err);
+    res.status(500).send("Error updating todo.");
+    return;
+  }
+});
+
 // ---------- DELETE METHODS ----------
 
 router.delete("/groups/:groupid", async (req, res) => {

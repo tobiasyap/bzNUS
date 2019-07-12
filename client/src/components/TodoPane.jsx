@@ -27,7 +27,7 @@ class TodoPane extends React.Component {
             Create
           </Button>
         </Row>
-        <TodoGrid todos={this.props.todos} />
+        <TodoGrid todos={this.props.todos} onUpdate={this.props.onTodoUpdate} />
         <TodoCreationModal
           group_id={this.props.group_id}
           isOpen={this.state.showTodoCreationModal}
