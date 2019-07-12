@@ -58,6 +58,7 @@ class TodoGrid extends React.Component {
     .then(res => {
       if(res.status === 200) {
         this.props.onUpdate();
+        return;
       }
       throw Error("Failed to update Todo as done");
     })

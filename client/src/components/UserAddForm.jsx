@@ -44,6 +44,7 @@ class UserAddForm extends React.Component {
     .then(res => {
       if(res.status === 200) {
         this.props.onUpdate();
+        return;
       }
       else {
         if(res.body === "Specified username does not exist.") {
