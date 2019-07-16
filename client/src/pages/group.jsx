@@ -13,7 +13,6 @@ import {
   Button
 } from "reactstrap";
 
-import Grid from "../components/grid";
 import DemoTimeline from "../components/DemoTimeline";
 import GroupTimeline from "../components/GroupTimeline";
 import MemberList from "../components/MemberList";
@@ -113,7 +112,6 @@ export default class GroupPage extends React.Component {
             />
           </TabPane>
           <TabPane tabId="3">
-            <Grid />
           </TabPane>
           <TabPane tabId="4">
             <Row>

@@ -11,7 +11,6 @@ import {
 import classnames from "classnames";
 import PropTypes from "prop-types";
 
-import Grid from "./grid";
 import GroupSchedule from "./GroupSchedule";
 import MemberList from "./MemberList";
 import TodoGrid from "./TodoGrid";
@@ -98,7 +97,6 @@ export default class Tabs extends React.Component {
             <TodoGrid todos={this.props.group.todos} />
           </TabPane>
           <TabPane tabId="3">
-            <Grid />
           </TabPane>
           <TabPane tabId="4">
             <Row>
