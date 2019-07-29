@@ -30,6 +30,7 @@ class GroupTimeline extends React.Component {
   }
 
   fetchAndUpdateTimelineData = async () => {
+    this.setState({ loaded: false });
     const { users } = this.props;
     const userTimetables = await this.fetchUserTimetables(users);
     this.setState({ userTimetables });

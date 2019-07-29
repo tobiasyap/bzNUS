@@ -111,8 +111,7 @@ export default class GroupPage extends React.Component {
               onTodoUpdate={() => this.props.onGroupUpdate(group.group_id)}
             />
           </TabPane>
-          <TabPane tabId="3">
-          </TabPane>
+          <TabPane tabId="3" />
           <TabPane tabId="4">
             <Row>
               <Col sm="12">
@@ -144,7 +143,7 @@ export default class GroupPage extends React.Component {
     return group.user_ids.includes(this.props.user.user_id);
   };
 
-  componentDidMount() {
+  fetchAndUpdateGroupUsers = () => {
     // Derive group from URL parameter
     const group = this.getGroup();
     if (!group || !this.userIn(group)) {
@@ -175,5 +174,18 @@ export default class GroupPage extends React.Component {
       .catch(err => {
         alert("Error fetching group members", err);
       });
+  };
+
+  componentDidMount() {
+    this.fetchAndUpdateGroupUsers();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.groups !== prevProps.groups ||
+      this.props.match.params.groupid !== prevProps.match.params.groupid
+    ) {
+      this.fetchAndUpdateGroupUsers();
+    }
   }
 }
