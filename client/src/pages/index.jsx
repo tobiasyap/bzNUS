@@ -27,7 +27,7 @@ export default class HomePage extends React.Component {
 
   componentDidMount() {
     // Fetch does not send cookies. So you should add credentials: 'include'
-    fetch("http://localhost:5000/auth/login/success", {
+    fetch("/auth/login/success", {
       method: "GET",
       credentials: "include",
       headers: {

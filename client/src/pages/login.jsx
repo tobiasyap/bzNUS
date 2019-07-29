@@ -18,6 +18,11 @@ export default class LoginPage extends Component {
     // Authenticate via passport API in the backend
     // Open NUS OpenID login page
     // Upon successful login, a cookie session will be stored in the client
-    window.open("http://localhost:5000/auth/nus", "_self");
+    window.open(
+      process.env.NODE_ENV === "production"
+        ? "/auth/nus"
+        : "http://localhost:5000/auth/nus",
+      "_self"
+    );
   };
 }

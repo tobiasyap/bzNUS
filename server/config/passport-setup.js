@@ -4,6 +4,11 @@ const pgp = require('pg-promise');
 const util = require("util");
 const User = require("../models/User");
 
+function makeEnvURL(url) {
+  if(process.env.NODE_ENV === "production") return url;
+  return "http://localhost:5000" + url;
+}
+
 function NusStrategy(options, validate) {
   options = options || {};
   options.providerURL = options.providerURL || "https://openid.nus.edu.sg/";
@@ -35,8 +40,8 @@ module.exports = passport => {
   passport.use(
     new NusStrategy(
       {
-        returnURL: "http://localhost:5000/auth/nus/return",
-        realm: "http://localhost:5000/",
+        returnURL: makeEnvURL("/auth/nus/return"),
+        realm: makeEnvURL("/"),
         profile: true
       },
       async (identifier, profile, done) => {

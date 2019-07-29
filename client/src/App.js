@@ -215,7 +215,7 @@ class App extends React.Component {
 
   fetchAuthenticatedUser = () => {
     // Fetch does not send cookies. So you should add credentials: 'include'
-    return fetch("http://localhost:5000/auth/login/success", {
+    return fetch("/auth/login/success", {
       method: "GET",
       credentials: "include",
       headers: {
