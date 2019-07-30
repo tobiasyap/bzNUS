@@ -87,7 +87,6 @@ function deserializeTimetable(serialized) {
  *     class taken.
  */
 function decodeTimes(moduleData, semester, codedTimes) {
-    console.log(codedTimes);
     const targetSem = moduleData.semesterData.find((s) => {
         return s.semester === semester;
     });

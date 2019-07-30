@@ -50,6 +50,7 @@ module.exports = passport => {
         try {
           try {
             const user = await User.findByNusnetID(identifier);
+            console.log(`Authenticated user ${user.fullname}`);
             return done(null, user); // User exists. Attach it to passport
           }
           catch(err) {

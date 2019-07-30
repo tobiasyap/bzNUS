@@ -191,7 +191,6 @@ class App extends React.Component {
         return group;
       })
       .then(group => {
-        console.log(group);
         // Update group
         let upGroups = [...this.state.groups]; // Copy groups array
         const index = upGroups.findIndex(g => g.group_id === group_id);

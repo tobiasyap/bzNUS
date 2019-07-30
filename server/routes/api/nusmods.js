@@ -75,7 +75,6 @@ router.get("/:url", async (req, res, next) => {
 
   // Finally, send the full timetable to the client
   res.send(timetable);
-  console.log(timetable);
 });
 
 module.exports = router;

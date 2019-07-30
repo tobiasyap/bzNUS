@@ -62,7 +62,6 @@ class ProfilePage extends React.Component {
       })
     })
       .then(res => {
-        console.log("response received:", res);
         if (res.status === 200) {
           // Update App User object
           this.props.onUserChange(res.json());
