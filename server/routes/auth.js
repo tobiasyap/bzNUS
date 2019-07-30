@@ -3,7 +3,10 @@ const passport = require("@passport-next/passport");
 
 const Global = require("../config/Global");
 
-const CLIENT_HOME_PAGE_URL = Global.CLIENT_HOME_PAGE_URL;
+const CLIENT_HOME_PAGE_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.ROOT_URL
+    : Global.CLIENT_HOME_PAGE_URL;
 
 // Set up authentication route
 router.get("/auth/nus", (req, res) => {
