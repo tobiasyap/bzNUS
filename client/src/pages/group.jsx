@@ -10,7 +10,8 @@ import {
   NavLink,
   Row,
   Col,
-  Button
+  Button,
+  Badge
 } from "reactstrap";
 
 import DemoTimeline from "../components/DemoTimeline";
@@ -81,16 +82,6 @@ export default class GroupPage extends React.Component {
                 this.toggleTab("3");
               }}
             >
-              Timetable
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: this.state.activeTab === "4" })}
-              onClick={() => {
-                this.toggleTab("4");
-              }}
-            >
               Members
             </NavLink>
           </NavItem>
@@ -99,7 +90,7 @@ export default class GroupPage extends React.Component {
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <h3>{`Welcome to the ${group.name} Home Page`}</h3>
+                <h3>Welcome to the <Badge color="secondary">{group.name}</Badge> Home Page</h3>
               </Col>
             </Row>
             <GroupTimeline users={this.state.groupUsers} />
@@ -111,8 +102,7 @@ export default class GroupPage extends React.Component {
               onTodoUpdate={() => this.props.onGroupUpdate(group.group_id)}
             />
           </TabPane>
-          <TabPane tabId="3" />
-          <TabPane tabId="4">
+          <TabPane tabId="3">
             <Row>
               <Col sm="12">
                 <h6>View, add, and remove members</h6>
