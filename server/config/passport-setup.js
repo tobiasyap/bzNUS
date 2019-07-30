@@ -5,7 +5,7 @@ const util = require("util");
 const User = require("../models/User");
 
 function makeEnvURL(url) {
-  if(process.env.NODE_ENV === "production") return url;
+  if(process.env.NODE_ENV === "production") return process.env.ROOT_URL + url;
   return "http://localhost:5000" + url;
 }
 
