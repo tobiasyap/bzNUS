@@ -91,6 +91,7 @@ class App extends React.Component {
               exact
               path="/"
               component={HomePage}
+              user={this.state.user}
             />
             <PrivateRoute
               authed={authenticated}

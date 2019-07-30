@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from 'react-router-dom';
 
+import { Jumbotron, Alert } from "reactstrap";
+
 export default class HomePage extends React.Component {
 
   static propTypes = {
@@ -18,66 +20,41 @@ export default class HomePage extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      user: {},
-      error: null,
-      authenticated: false
-    };
-  }
-
-  componentDidMount() {
-    // Fetch does not send cookies. So you should add credentials: 'include'
-    fetch("/auth/login/success", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": true
-      }
-    })
-      .then(response => {
-        if (response.status === 200) return response.json();
-        throw new Error("failed to authenticate user");
-      })
-      .then(responseJson => {
-        this.setState({
-          authenticated: true,
-          user: responseJson.user
-        });
-      })
-      .catch(error => {
-        this.setState({
-          authenticated: false,
-          error: "Failed to authenticate user"
-        });
-      });
   }
 
   render() {
-    const { authenticated } = this.state;
-    const linked_with_nusmods = this.state.user.timetableurl;
-
+    const { user } = this.props;
     return (
       <div>
-        {!authenticated ? (
-              <h1>Welcome!</h1>
-            ) : (
-              <div>
-                <h1>You have logged in succcessfully!</h1>
-                <h2>Welcome {this.state.user.fullname}!</h2>
-                {!linked_with_nusmods ? (
-                  <Link to="/nusmods">Link to NUSMods</Link>
-                ) : (
-                  <h4>You have linked with NUSMods.</h4>
-                )}
-              </div>
-            )}
+        <Jumbotron>
+          <h1 className="display-3">Welcome,</h1>
+          <p className="lead">{user.fullname}</p>
+          <hr className="my-2" />
+          {user.username ? (
+            <Alert color="success">
+              Your username is {user.username}
+            </Alert>
+          ) : (
+            <Alert color="warning">
+              <Link to="/profile">Set a username so your groupmates can add you.</Link>
+            </Alert>
+          )}
+          {user.timetableurl ? (
+            <Alert color="success">
+              You have imported your NUSMods timetable.
+            </Alert>
+          ) : (
+            <Alert color="warning">
+              <Link to="/nusmods">Import your NUSMods timetable to get started.</Link>
+            </Alert>
+          )}
+          {user.group_ids.length === 0 && (
+            <Alert color="info">
+              You aren't in any groups yet. Create one or ask your groupmates to add you.
+            </Alert>
+          )}
+        </Jumbotron>
       </div>
     );
   }
-
-  _handleNotAuthenticated = () => {
-    this.setState({ authenticated: false });
-  };
 }
