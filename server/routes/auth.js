@@ -6,9 +6,9 @@ const Global = require("../config/Global");
 const CLIENT_HOME_PAGE_URL = Global.CLIENT_HOME_PAGE_URL;
 
 // Set up authentication route
-router.get("/auth/nus", () => {
+router.get("/auth/nus", (req, res) => {
   console.log("authenticating");
-  passport.authenticate("nus-openid");
+  passport.authenticate("nus-openid")(req, res);
 });
 
 // Redirect to client homepage after sucessful authentication

@@ -25,9 +25,11 @@ let CLIENT_HOME_PAGE_URL = Global.CLIENT_HOME_PAGE_URL;
 if(ENV === 'production') {
     CLIENT_HOME_PAGE_URL = '/';
     app.use(express.static(path.join(__dirname, '../client/build')));
+    /*
     app.use((req, res) => {
         res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
+    */
 }
 
 // Set up cors to allow us to accept requests from our client
