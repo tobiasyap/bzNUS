@@ -88,12 +88,12 @@ function remove(group_id) {
   });
 }
 
-function removeUserID(user_id) {
+function removeUserID(group_id, user_id) {
   return db.tx(t => {
     return t
-      .none("DELETE FROM group_users WHERE user_id = $1", user_id)
+      .none("DELETE FROM group_users WHERE (group_id = $1 AND user_id = $2)", [group_id, user_id])
       .then(() => {
-        t.none("SELECT * FROM group_users WHERE user_id = $1", user_id);
+        t.none("SELECT * FROM group_users WHERE (group_id = $1 AND user_id = $2)", [group_id, user_id]);
       });
   });
 }

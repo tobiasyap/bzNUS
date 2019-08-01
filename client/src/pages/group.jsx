@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
 import classnames from "classnames";
 import PropTypes from "prop-types";
 
@@ -26,7 +27,8 @@ export default class GroupPage extends React.Component {
 
     this.state = {
       groupUsers: [],
-      activeTab: "1"
+      activeTab: "1",
+      redirect: false
     };
   }
 
@@ -50,6 +52,10 @@ export default class GroupPage extends React.Component {
 
     if (!group || !this.userIn(group)) {
       return <p>You are not authorised to view this group.</p>;
+    }
+
+    if(this.state.redirect) {
+      return <Redirect to="/" />;
     }
 
     return (
@@ -90,7 +96,10 @@ export default class GroupPage extends React.Component {
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <h3>Welcome to the <Badge color="secondary">{group.name}</Badge> Home Page</h3>
+                <h3>
+                  Welcome to the <Badge color="secondary">{group.name}</Badge>{" "}
+                  Home Page
+                </h3>
               </Col>
             </Row>
             <GroupTimeline users={this.state.groupUsers} />
@@ -116,6 +125,14 @@ export default class GroupPage extends React.Component {
                   group={group}
                   groupUsers={this.state.groupUsers}
                 />
+                <br />
+                <Button
+                  outline
+                  color="danger"
+                  onClick={() => this.leaveGroup(group.group_id)}
+                >
+                  Leave group
+                </Button>
               </Col>
             </Row>
           </TabPane>
@@ -167,8 +184,6 @@ export default class GroupPage extends React.Component {
       });
   };
 
-  
-
   componentDidMount() {
     this.fetchAndUpdateGroupUsers();
   }
@@ -181,4 +196,27 @@ export default class GroupPage extends React.Component {
       this.fetchAndUpdateGroupUsers();
     }
   }
+
+  leaveGroup = group_id => {
+    fetch(`/api/groups/${group_id}/users/${this.props.user.user_id}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": true
+      }
+    })
+    .then(res => {
+      if(res.status === 500) throw new Error(res.status + res.statusText);
+      return res;
+    })
+    .then(res => {
+      this.setState({ redirect: true });
+      this.props.onGroupUpdate(group_id);
+    })
+    .catch(err => {
+      alert("Error leaving group", err);
+    });
+  };
 }

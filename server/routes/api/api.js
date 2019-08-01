@@ -353,7 +353,8 @@ router.put("/todos/:todoid/isdone", async (req, res) => {
 
 router.delete("/groups/:groupid", async (req, res) => {
   try {
-    await Group.remove(req.params.groupid);
+    await Group.remove(Number(req.params.groupid));
+    res.send(`Deleted group ${req.params.groupid}`)
   } catch (err) {
     console.error(err);
     res.status(500).send("Error deleting group.");
@@ -363,7 +364,8 @@ router.delete("/groups/:groupid", async (req, res) => {
 
 router.delete("/groups/:groupid/users/:userid", async (req, res) => {
   try {
-    await Group.removeUserID(req.params.groupid, req.params.userid);
+    await Group.removeUserID(Number(req.params.groupid), Number(req.params.userid));
+    res.send(`Deleted user ${req.params.userid} from group ${req.params.groupid}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error removing user from group.");
