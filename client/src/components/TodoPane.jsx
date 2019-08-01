@@ -32,6 +32,7 @@ class TodoPane extends React.Component {
         </Row>
         <h5>Undone</h5>
         <TodoGrid todos={undoneTodos} onUpdate={this.props.onTodoUpdate} />
+        <br />
         <h5>Done</h5>
         <TodoDoneGrid todos={doneTodos} />
         <TodoCreationModal

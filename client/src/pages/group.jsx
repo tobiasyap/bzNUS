@@ -110,6 +110,7 @@ export default class GroupPage extends React.Component {
                   group_id={group.group_id}
                   onUpdate={() => this.props.onGroupUpdate(group.group_id)}
                 />
+                <br />
                 <MemberList
                   user={this.props.user}
                   group={group}
@@ -165,6 +166,8 @@ export default class GroupPage extends React.Component {
         alert("Error fetching group members", err);
       });
   };
+
+  
 
   componentDidMount() {
     this.fetchAndUpdateGroupUsers();
