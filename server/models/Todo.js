@@ -3,7 +3,7 @@
 
     If found, will return a Todo object with the following fields:
     {
-        todo_id: primary key 
+      todo_id: primary key 
 	    title:
 	    description:
 	    created_at: creation timestamp
@@ -18,7 +18,7 @@ function findByTodoID(todo_id) {
 
 function findByGroupID(group_id) {
   return db.any(
-    "SELECT * FROM todos WHERE todo_id = SELECT todo_id FROM group_todos WHERE group_id = $1",
+    "SELECT * FROM todos WHERE todo_id IN (SELECT todo_id FROM group_todos WHERE group_id = $1)",
     group_id
   );
 }

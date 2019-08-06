@@ -13,6 +13,7 @@
 const db = require("../database");
 
 const Todo = require("./Todo");
+const Event = require("./Event");
 
 function findByGroupID(group_id) {
   return db
@@ -29,8 +30,10 @@ function findByGroupID(group_id) {
             "SELECT * FROM todos WHERE todo_id IN (SELECT todo_id FROM group_todos WHERE group_id = $1)",
             group_id
           );
+          const events = await Event.findByGroupID(group_id);
           g.user_ids = user_ids;
           g.todos = todos;
+          g.events = events;
           resolve(g);
         } catch (err) {
           console.error(`Error fetching group ${group_id}`);

@@ -36,7 +36,7 @@ export default class HomePage extends React.Component {
             </Alert>
           ) : (
             <Alert color="warning">
-              <Link to="/profile">Set a username so your groupmates can add you.</Link>
+              <Link to="/profile">Set a username so your groupmates can add you to groups.</Link>
             </Alert>
           )}
           {user.timetableurl ? (
