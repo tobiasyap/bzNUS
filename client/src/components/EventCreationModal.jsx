@@ -13,7 +13,6 @@ import {
   Spinner
 } from "reactstrap";
 import PropTypes from "prop-types";
-import { async } from "../../../../../../../../AppData/Local/Microsoft/TypeScript/3.5/node_modules/rxjs/internal/scheduler/async";
 
 class EventCreationModal extends React.Component {
   constructor(props) {
