@@ -25,7 +25,8 @@ class EventCreationModal extends React.Component {
     start.setMinutes(0);
     start.setSeconds(0);
     start.setMilliseconds(0);
-    let end = new Date(start).setHours(start.getHours() + 1);
+    let end = new Date(start);
+    end.setHours(start.getHours() + 1);
     this.state = {
       title: "",
       description: "",
@@ -103,14 +104,29 @@ class EventCreationModal extends React.Component {
 
   onSubmit = async () => {
     this.setState({ loading: true });
-
     try {
-      
+      await fetch(`/api/groups/${this.props.group_id}/events`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": true
+        },
+        body: JSON.stringify({
+          title: this.state.title,
+          description: this.state.description,
+          start_timestamp: this.state.start_date.toISOString(),
+          end_timestamp: this.state.end_date.toISOString(),
+        })
+      });
+      this.props.onCreate(); // update group state
     }
     catch(err) {
-
+      console.error(`Error inserting event '${this.state.title}'`);
+      console.error(err);
+      alert("Unexpected error. Please try again.");
     }
-
     this.setState({ loading: false });
     this.props.onToggle();
   };

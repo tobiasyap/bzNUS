@@ -3,7 +3,7 @@
 
     If found, will return a Group object with the following fields:
     {
-        group_id: primary key
+      group_id: primary key
 	    name: group name
 	    usernames: array of usernames 
 	    todos: array of todos

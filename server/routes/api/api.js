@@ -177,7 +177,7 @@ router.post("/groups/:groupid/users", async (req, res) => {
   }
 });
 
-router.put("/groups/:groupid/events", async (req, res) => {
+router.post("/groups/:groupid/events", async (req, res) => {
   // Validate request
   const schema = {
     title: Joi.string()
