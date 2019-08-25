@@ -14,13 +14,23 @@ import {
 } from "reactstrap";
 import PropTypes from "prop-types";
 
+import StartEndPicker from "./StartEndPicker";
+
 class EventCreationModal extends React.Component {
   constructor(props) {
     super(props);
 
+    let start = new Date();
+    start.setHours(start.getHours() + 1);
+    start.setMinutes(0);
+    start.setSeconds(0);
+    start.setMilliseconds(0);
+    let end = new Date(start).setHours(start.getHours() + 1);
     this.state = {
       title: "",
       description: "",
+      start_date: start, 
+      end_date: end,
       loading: false,
     };
   }
@@ -68,6 +78,12 @@ class EventCreationModal extends React.Component {
                 />
               </FormGroup>
             </Form>
+            <StartEndPicker
+              start_date={this.state.start_date}
+              end_date={this.state.end_date}
+              onStartUpdate={date => this.setState({ start_date: date })}
+              onEndUpdate={date => this.setState({ end_date: date })}
+            />
           </ModalBody>
           <ModalFooter>
             {this.state.loading &&
