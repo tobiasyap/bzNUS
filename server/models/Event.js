@@ -25,13 +25,21 @@ function findByGroupID(group_id) {
   );
 }
 
+function findByGroupIDTimes(group_id, start_timestamp, end_timestamp) {
+  return db.any(
+    "SELECT * FROM events WHERE (event_id IN (SELECT event_id FROM group_events WHERE group_id = $1) AND (start_timestamp >= $2 AND start_timestamp <= $3))",
+    [group_id, start_timestamp, end_timestamp]
+  );
+}
+
 function insert(group_id, event) {
   return db.tx(t => {
     t.one(
-      "INSERT INTO events (title, description, start_timestamp, end_timestamp) VALUES ($1, $2, $3, $4) RETURNING event_id",
+      "INSERT INTO events (title, description, minutes, start_timestamp, end_timestamp) VALUES ($1, $2, $3, $4, $5) RETURNING event_id",
       [
         event.title,
         event.description,
+        event.minutes,
         event.start_timestamp,
         event.end_timestamp
       ]
@@ -79,6 +87,7 @@ function remove(event_id) {
 module.exports = {
   findByEventID: findByEventID,
   findByGroupID: findByGroupID,
+  findByGroupIDTimes: findByGroupIDTimes,
   insert: insert,
   update: update,
   remove: remove

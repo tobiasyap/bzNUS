@@ -15,10 +15,10 @@ import {
   Badge
 } from "reactstrap";
 
-import DemoTimeline from "../components/DemoTimeline";
 import GroupTimeline from "../components/GroupTimeline";
-import MemberList from "../components/MemberList";
+import EventPane from "../components/EventPane";
 import TodoPane from "../components/TodoPane";
+import MemberList from "../components/MemberList";
 import UserAddForm from "../components/UserAddForm";
 
 export default class GroupPage extends React.Component {
@@ -78,7 +78,7 @@ export default class GroupPage extends React.Component {
                 this.toggleTab("2");
               }}
             >
-              Todo
+              Events
             </NavLink>
           </NavItem>
           <NavItem>
@@ -86,6 +86,16 @@ export default class GroupPage extends React.Component {
               className={classnames({ active: this.state.activeTab === "3" })}
               onClick={() => {
                 this.toggleTab("3");
+              }}
+            >
+              Todo
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === "4" })}
+              onClick={() => {
+                this.toggleTab("4");
               }}
             >
               Members
@@ -105,13 +115,20 @@ export default class GroupPage extends React.Component {
             <GroupTimeline users={this.state.groupUsers} />
           </TabPane>
           <TabPane tabId="2">
+            <EventPane
+              group_id={group.group_id}
+              events={group.events}
+              onEventUpdate={() => this.props.onGroupUpdate(group.group_id)}
+            />
+          </TabPane>
+          <TabPane tabId="3">
             <TodoPane
               group_id={group.group_id}
               todos={group.todos}
               onTodoUpdate={() => this.props.onGroupUpdate(group.group_id)}
             />
           </TabPane>
-          <TabPane tabId="3">
+          <TabPane tabId="4">
             <Row>
               <Col sm="12">
                 <h6>View, add, and remove members</h6>

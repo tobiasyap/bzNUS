@@ -5,6 +5,7 @@ const errors = require("pg-promise").errors;
 const User = require("../../models/User");
 const Group = require("../../models/Group");
 const Todo = require("../../models/Todo");
+const Event = require("../../models/Event");
 const DbUtilities = require("../../models/Utilities");
 
 const Global = require("../../config/Global");
@@ -171,6 +172,41 @@ router.post("/groups/:groupid/users", async (req, res) => {
     res.send(retGU);
   } catch (err) {
     res.status(500).send("Error inserting user into group.");
+    console.error(err);
+    return;
+  }
+});
+
+router.put("/groups/:groupid/events", async (req, res) => {
+  // Validate request
+  const schema = {
+    title: Joi.string()
+      .max(80)
+      .required(),
+    description: Joi.string(),
+    minutes: Joi.string(),
+    start_timestamp: Joi.date().iso(),
+    end_timestamp: Joi.date().iso(),
+  };
+  const validation = Joi.validate(req.body, schema);
+  if (validation.error) {
+    res.status(400).send(validation.error);
+    console.error(validation);
+    return;
+  }
+  const reqEvent = {
+    title: req.body.title,
+    description: req.body.description,
+    minutes: req.body.minutes,
+    start_timestamp: new Date(req.body.start_timestamp),
+    end_timestamp: new Date(req.body.end_timestamp),
+  };
+  
+  try {
+    const retEvent = await Event.insert(Number(req.params.groupid), reqEvent);
+    res.send(retEvent);
+  } catch (err) {
+    res.status(500).send("Error inserting event.");
     console.error(err);
     return;
   }
