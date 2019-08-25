@@ -4,13 +4,16 @@ import { Button, ListGroup, ListGroupItem } from "reactstrap";
 import moment from "moment";
 
 import EventCreationModal from "./EventCreationModal";
+import EventEditModal from "./EventEditModal";
 
 class EventPane extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      showEventCreationModal: false
+      selectedEventId: -1,
+      showEventCreationModal: false,
+      showEventEditModal: false
     };
   }
   static propTypes = {
@@ -21,6 +24,13 @@ class EventPane extends React.Component {
 
   render() {
     const EventItems = this.EventItems;
+    const selectedEvent =
+      this.state.selectedEventId === -1
+        ? null
+        : this.props.events.find(
+            e => e.event_id === this.state.selectedEventId
+          );
+
     return (
       <div>
         <Button color="primary" onClick={this.onEventCreationButtonClick}>
@@ -40,6 +50,14 @@ class EventPane extends React.Component {
           onToggle={this.onEventCreationToggle}
           onCreate={this.props.onEventUpdate}
         />
+        {selectedEvent && (
+          <EventEditModal
+            event={selectedEvent}
+            isOpen={this.state.showEventEditModal}
+            onToggle={this.onEventEditToggle}
+            onUpdate={this.props.onEventUpdate}
+          />
+        )}
       </div>
     );
   }
@@ -48,7 +66,12 @@ class EventPane extends React.Component {
     let items = [...props.events]
       .sort((a, b) => new Date(b.start_timestamp) - new Date(a.start_timestamp))
       .map(event => (
-        <ListGroupItem key={`lgi_${event.event_id}`}>
+        <ListGroupItem
+          key={`lgi_${event.event_id}`}
+          tag="button"
+          action
+          onClick={() => this.onEventClick(event.event_id)}
+        >
           {moment(event.start_timestamp).format("DD/MM/YY h:mma")} {event.title}
         </ListGroupItem>
       ));
@@ -62,6 +85,16 @@ class EventPane extends React.Component {
   onEventCreationToggle = () => {
     const { showEventCreationModal } = this.state;
     this.setState({ showEventCreationModal: !showEventCreationModal });
+  };
+
+  onEventClick = async event_id => {
+    await this.setState({ selectedEventId: event_id });
+    this.setState({ showEventEditModal: true });
+  };
+
+  onEventEditToggle = () => {
+    const { showEventEditModal } = this.state;
+    this.setState({ showEventEditModal: !showEventEditModal });
   };
 }
 

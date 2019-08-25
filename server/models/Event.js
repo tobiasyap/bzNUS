@@ -59,7 +59,7 @@ function insert(group_id, event) {
 
 function update(event) {
   return db.tx(t => {
-    t.none(
+    return t.none(
       "UPDATE events SET title = $1, description = $2, minutes = $3, start_timestamp = $4, end_timestamp = $5 WHERE event_id = $6",
       [
         event.title,

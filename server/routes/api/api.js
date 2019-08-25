@@ -146,7 +146,7 @@ router.post("/groups/:groupid/users", async (req, res) => {
     return;
   }
 
-  if(user_id) {
+  if (user_id) {
     try {
       await User.findByUserID(user_id);
     } catch (err) {
@@ -154,13 +154,11 @@ router.post("/groups/:groupid/users", async (req, res) => {
       console.error(err);
       return;
     }
-  }
-  else {
+  } else {
     try {
       const user = await User.findByUsername(username);
       user_id = user.user_id;
-    }
-    catch(err) {
+    } catch (err) {
       res.status(400).send("Specified username does not exist.");
       console.error(err);
       return;
@@ -186,7 +184,7 @@ router.post("/groups/:groupid/events", async (req, res) => {
     description: Joi.string(),
     minutes: Joi.string(),
     start_timestamp: Joi.date().iso(),
-    end_timestamp: Joi.date().iso(),
+    end_timestamp: Joi.date().iso()
   };
   const validation = Joi.validate(req.body, schema);
   if (validation.error) {
@@ -199,9 +197,17 @@ router.post("/groups/:groupid/events", async (req, res) => {
     description: req.body.description,
     minutes: req.body.minutes,
     start_timestamp: new Date(req.body.start_timestamp),
-    end_timestamp: new Date(req.body.end_timestamp),
+    end_timestamp: new Date(req.body.end_timestamp)
   };
-  
+  if (reqEvent.start_timestamp > reqEvent.end_timestamp) {
+    res.status(400).send("start_timestamp cannot be after end_timestamp");
+    console.error(
+      `Error inserting event: start_timestamp ${reqEvent.start_timestamp}` +
+        ` is after end_timestamp ${reqEvent.end_timestamp}.`
+    );
+    return;
+  }
+
   try {
     const retEvent = await Event.insert(Number(req.params.groupid), reqEvent);
     res.send(retEvent);
@@ -216,7 +222,9 @@ router.post("/groups/:groupid/events", async (req, res) => {
 
 router.put("/users/:userid", async (req, res) => {
   const schema = {
-    user_id: Joi.number().integer().required(),
+    user_id: Joi.number()
+      .integer()
+      .required(),
     nusnet_id: Joi.string(),
     username: Joi.string().allow(null),
     fullname: Joi.string().allow(null),
@@ -331,7 +339,9 @@ router.put("/todos/:todoid", async (req, res) => {
     return;
   }
   const schema = {
-    todo_id: Joi.number().integer().required(),
+    todo_id: Joi.number()
+      .integer()
+      .required(),
     title: Joi.string().required(),
     description: Joi.string().required()
   };
@@ -373,14 +383,70 @@ router.put("/todos/:todoid/isdone", async (req, res) => {
     console.error(validation);
     return;
   }
-  
+
   try {
-    const retTodo = await Todo.updateDone(Number(req.params.todoid), Boolean(req.body.is_done));
+    const retTodo = await Todo.updateDone(
+      Number(req.params.todoid),
+      Boolean(req.body.is_done)
+    );
     res.send(retTodo);
-  }
-  catch(err) {
+  } catch (err) {
     console.error(err);
     res.status(500).send("Error updating todo.");
+    return;
+  }
+});
+
+router.put("/events/:eventid", async (req, res) => {
+  if (Number(req.params.eventid) !== Number(req.body.event_id)) {
+    res.status(400).send("Body and URL event_id do not match.");
+    return;
+  }
+  const schema = {
+    event_id: Joi.number(),
+    title: Joi.string()
+      .max(80)
+      .required(),
+    description: Joi.string(),
+    minutes: Joi.string(),
+    start_timestamp: Joi.date().iso(),
+    end_timestamp: Joi.date().iso()
+  };
+  const validation = Joi.validate(req.body, schema);
+  if (validation.error) {
+    res.status(400).send(validation.error);
+    console.error(validation);
+    return;
+  }
+  const reqEvent = {
+    event_id: Number(req.body.event_id),
+    title: req.body.title,
+    description: req.body.description,
+    minutes: req.body.minutes,
+    start_timestamp: new Date(req.body.start_timestamp),
+    end_timestamp: new Date(req.body.end_timestamp)
+  };
+  if (reqEvent.start_timestamp > reqEvent.end_timestamp) {
+    res.status(400).send("start_timestamp cannot be after end_timestamp");
+    console.error(
+      `Error inserting event: start_timestamp ${reqEvent.start_timestamp}` +
+        ` is after end_timestamp ${reqEvent.end_timestamp}.`
+    );
+    return;
+  }
+
+  try {
+    const retEvent = await Event.update(reqEvent);
+    res.send(retEvent);
+  } catch (err) {
+    if (err instanceof errors.QueryResultError) {
+      if (err.code === errors.queryResultErrorCode.noData) {
+        res.status(400).send("Specified event_id does not exist.");
+        return;
+      }
+    }
+    res.status(500).send("Error inserting event.");
+    console.error(err);
     return;
   }
 });
@@ -390,7 +456,7 @@ router.put("/todos/:todoid/isdone", async (req, res) => {
 router.delete("/groups/:groupid", async (req, res) => {
   try {
     await Group.remove(Number(req.params.groupid));
-    res.send(`Deleted group ${req.params.groupid}`)
+    res.send(`Deleted group ${req.params.groupid}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error deleting group.");
@@ -400,8 +466,13 @@ router.delete("/groups/:groupid", async (req, res) => {
 
 router.delete("/groups/:groupid/users/:userid", async (req, res) => {
   try {
-    await Group.removeUserID(Number(req.params.groupid), Number(req.params.userid));
-    res.send(`Deleted user ${req.params.userid} from group ${req.params.groupid}`);
+    await Group.removeUserID(
+      Number(req.params.groupid),
+      Number(req.params.userid)
+    );
+    res.send(
+      `Deleted user ${req.params.userid} from group ${req.params.groupid}`
+    );
   } catch (err) {
     console.error(err);
     res.status(500).send("Error removing user from group.");
