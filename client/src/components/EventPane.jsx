@@ -56,6 +56,7 @@ class EventPane extends React.Component {
             isOpen={this.state.showEventEditModal}
             onToggle={this.onEventEditToggle}
             onUpdate={this.props.onEventUpdate}
+            onDelete={this.onEventDelete}
           />
         )}
       </div>
@@ -96,6 +97,11 @@ class EventPane extends React.Component {
     const { showEventEditModal } = this.state;
     this.setState({ showEventEditModal: !showEventEditModal });
   };
+
+  onEventDelete = () => {
+    this.setState({ showEventEditModal: false });
+    this.props.onEventUpdate();
+  }
 }
 
 export default EventPane;

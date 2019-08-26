@@ -197,7 +197,7 @@ export default class GroupPage extends React.Component {
           })
       );
     }
-    Promise.all(users)
+    return Promise.all(users)
       .then(users => this.setState({ groupUsers: users }))
       .catch(err => {
         alert("Error fetching group members", err);
@@ -208,12 +208,13 @@ export default class GroupPage extends React.Component {
     this.fetchAndUpdateGroupUsers();
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps, prevState) {
     if (
       this.props.groups !== prevProps.groups ||
       this.props.match.params.groupid !== prevProps.match.params.groupid
     ) {
-      this.fetchAndUpdateGroupUsers();
+      await this.fetchAndUpdateGroupUsers();
+      this.setState({ activeTab: prevState.activeTab });
     }
   }
 

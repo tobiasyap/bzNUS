@@ -77,7 +77,7 @@ function update(event) {
 
 function remove(event_id) {
   return db.tx(t => {
-    t.none("DELETE * FROM events WHERE event_id = $1", event_id).then(() => {
+    t.none("DELETE FROM events WHERE event_id = $1", event_id).then(() => {
       t.none("SELECT * FROM events WHERE event_id = $1", event_id);
       t.none("SELECT * FROM group_events WHERE event_id = $1", event_id);
     });

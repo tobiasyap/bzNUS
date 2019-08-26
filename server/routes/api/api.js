@@ -445,7 +445,7 @@ router.put("/events/:eventid", async (req, res) => {
         return;
       }
     }
-    res.status(500).send("Error inserting event.");
+    res.status(500).send("Error updating event.");
     console.error(err);
     return;
   }
@@ -483,6 +483,7 @@ router.delete("/groups/:groupid/users/:userid", async (req, res) => {
 router.delete("/todos/:todoid", async (req, res) => {
   try {
     await Todo.remove(req.params.todoid);
+    res.send(`Deleted todo ${req.params.todoid}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error deleting todo.");
@@ -493,6 +494,7 @@ router.delete("/todos/:todoid", async (req, res) => {
 router.delete("/events/:eventid", async (req, res) => {
   try {
     await Event.remove(Number(req.params.eventid));
+    res.send(`Deleted event ${req.params.eventid}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Error deleting event.");

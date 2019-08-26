@@ -40,7 +40,8 @@ class EventEditModal extends React.Component {
     event: PropTypes.object.isRequired,
     isOpen: PropTypes.bool.isRequired,
     onToggle: PropTypes.func.isRequired,
-    onUpdate: PropTypes.func.isRequired
+    onUpdate: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired
   };
 
   handleInputChange = async event => {
@@ -92,13 +93,18 @@ class EventEditModal extends React.Component {
             />
           </ModalBody>
           <ModalFooter>
-            {this.state.loading && <Spinner size="sm" color="primary" />}
-            <Button color="primary" onClick={this.onSubmit}>
-              Save
-            </Button>{" "}
-            <Button color="secondary" onClick={this.props.onToggle}>
-              Cancel
-            </Button>
+            <Col className="text-left">
+              <Button color="danger" onClick={this.onDelete}>Delete</Button>
+            </Col>
+            <Col className="text-right">
+              {this.state.loading && <Spinner size="sm" color="primary" />}
+              <Button color="primary" onClick={this.onSubmit}>
+                Save
+              </Button>{" "}
+              <Button color="secondary" onClick={this.props.onToggle}>
+                Cancel
+              </Button>
+            </Col>    
           </ModalFooter>
         </Modal>
       </div>
@@ -133,6 +139,25 @@ class EventEditModal extends React.Component {
     }
     this.setState({ loading: false });
     this.props.onToggle();
+  };
+
+  onDelete = async () => {
+    try {
+      await fetch(`/api/events/${this.props.event.event_id}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": true
+        },
+      });
+      this.props.onDelete();
+    } catch(err) {
+      console.error(`Error deleting event '${this.state.title}'`);
+      console.error(err);
+      alert("Unexpected error. Please try again.");
+    }
   };
 }
 
