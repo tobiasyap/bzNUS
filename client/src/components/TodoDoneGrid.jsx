@@ -44,7 +44,11 @@ class TodoDoneGrid extends React.Component {
               <Typography className={classes.pos} variant="body1" component="p">
                 {todo.description}
               </Typography>
-              <Typography variant="caption" color="textSecondary" textAlign="bottom">
+              <Typography
+                variant="caption"
+                color="textSecondary"
+                textAlign="bottom"
+              >
                 {moment(todo.created_at).format("ddd, DD/MM/YY h:mma")}
               </Typography>
             </CardContent>
@@ -54,9 +58,13 @@ class TodoDoneGrid extends React.Component {
     });
     return (
       <div className={classes.root}>
-        <Grid container spacing={3}>
-          {gridItems}
-        </Grid>
+        {gridItems.length === 0 ? (
+          <p>No todos done.</p>
+        ) : (
+          <Grid container spacing={8}>
+            {gridItems}
+          </Grid>
+        )}
       </div>
     );
   }

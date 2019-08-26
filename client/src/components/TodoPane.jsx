@@ -25,11 +25,10 @@ class TodoPane extends React.Component {
     const doneTodos = this.props.todos.filter(todo => todo.is_done);
     return (
       <div>
-        <Row>
-          <Button color="primary" onClick={this.onTodoCreationButtonClick}>
-            Create
-          </Button>
-        </Row>
+        <Button color="primary" onClick={this.onTodoCreationButtonClick}>
+          Create
+        </Button>
+        <br />
         <h5>Undone</h5>
         <TodoGrid todos={undoneTodos} onUpdate={this.props.onTodoUpdate} />
         <br />

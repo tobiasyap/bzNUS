@@ -14,6 +14,7 @@ import {
   Button,
   Badge
 } from "reactstrap";
+import Container from "@material-ui/core/Container";
 
 import GroupTimeline from "../components/GroupTimeline";
 import EventPane from "../components/EventPane";
@@ -54,7 +55,7 @@ export default class GroupPage extends React.Component {
       return <p>You are not authorised to view this group.</p>;
     }
 
-    if(this.state.redirect) {
+    if (this.state.redirect) {
       return <Redirect to="/" />;
     }
 
@@ -112,27 +113,34 @@ export default class GroupPage extends React.Component {
                 </h3>
               </Col>
             </Row>
-            <GroupTimeline 
+            <GroupTimeline
               users={this.state.groupUsers}
-              events={group.events} 
+              events={group.events}
             />
           </TabPane>
           <TabPane tabId="2">
-            <EventPane
-              group_id={group.group_id}
-              events={group.events}
-              onEventUpdate={() => this.props.onGroupUpdate(group.group_id)}
-            />
+            <Container maxWidth="lg">
+              <br />
+              <EventPane
+                group_id={group.group_id}
+                events={group.events}
+                onEventUpdate={() => this.props.onGroupUpdate(group.group_id)}
+              />
+            </Container>
           </TabPane>
           <TabPane tabId="3">
-            <TodoPane
-              group_id={group.group_id}
-              todos={group.todos}
-              onTodoUpdate={() => this.props.onGroupUpdate(group.group_id)}
-            />
+            <Container maxWidth="lg">
+              <br />
+              <TodoPane
+                group_id={group.group_id}
+                todos={group.todos}
+                onTodoUpdate={() => this.props.onGroupUpdate(group.group_id)}
+              />
+            </Container>
           </TabPane>
           <TabPane tabId="4">
-            <Row>
+            <Container maxWidth="lg">
+              <br />
               <Col sm="12">
                 <h6>View, add, and remove members</h6>
                 <UserAddForm
@@ -154,7 +162,7 @@ export default class GroupPage extends React.Component {
                   Leave group
                 </Button>
               </Col>
-            </Row>
+            </Container>
           </TabPane>
         </TabContent>
       </div>
@@ -228,16 +236,16 @@ export default class GroupPage extends React.Component {
         "Access-Control-Allow-Credentials": true
       }
     })
-    .then(res => {
-      if(res.status === 500) throw new Error(res.status + res.statusText);
-      return res;
-    })
-    .then(res => {
-      this.setState({ redirect: true });
-      this.props.onGroupUpdate(group_id);
-    })
-    .catch(err => {
-      alert("Error leaving group", err);
-    });
+      .then(res => {
+        if (res.status === 500) throw new Error(res.status + res.statusText);
+        return res;
+      })
+      .then(res => {
+        this.setState({ redirect: true });
+        this.props.onGroupUpdate(group_id);
+      })
+      .catch(err => {
+        alert("Error leaving group", err);
+      });
   };
 }
