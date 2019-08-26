@@ -41,7 +41,6 @@ class StartEndPicker extends React.Component {
           </Grid>
           <Grid item xs={12} sm={5}>
             <KeyboardTimePicker
-              disableToolbar
               variant="inline"
               margin="normal"
               id="start-time-picker"
@@ -70,7 +69,6 @@ class StartEndPicker extends React.Component {
           </Grid>
           <Grid item xs={12} sm={5}>
             <KeyboardTimePicker
-              disableToolbar
               variant="inline"
               margin="normal"
               id="end-time-picker"
