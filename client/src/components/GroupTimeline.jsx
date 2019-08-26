@@ -16,7 +16,8 @@ class GroupTimeline extends React.Component {
     };
   }
   static propTypes = {
-    users: PropTypes.array.isRequired
+    users: PropTypes.array.isRequired,
+    events: PropTypes.array.isRequired
   };
 
   componentDidMount() {
@@ -31,37 +32,57 @@ class GroupTimeline extends React.Component {
 
   fetchAndUpdateTimelineData = async () => {
     this.setState({ loaded: false });
-    const { users } = this.props;
+    const { users, events } = this.props;
     const userTimetables = await this.fetchUserTimetables(users);
     this.setState({ userTimetables });
     let timeGroups = this.usersToTimeGroups(users);
 
     const firstDayOfWeekMoment = moment().startOf("isoWeek");
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const dayMoments = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ].map(d => moment(firstDayOfWeekMoment.clone().isoWeekday(d)));
+    const firstDayMoment = dayMoments[0];
+    const lastDayMoment = dayMoments[4];
+
+    const weekEvents = events.filter(e => {
+      const start = moment(e.start_timestamp);
+      const end = moment(e.end_timestamp);
+      return (
+        start.isBetween(firstDayMoment, lastDayMoment, "[]") ||
+        end.isBetween(firstDayMoment, lastDayMoment, "[]")
+      );
+    });
     let weekItems = {};
-    for (const day of days) {
-      weekItems[day] = [];
+    for (const day of dayMoments) {
+      const dayName = day.format("dddd");
+      weekItems[dayName] = [];
       for (const { user_id } of users) {
-        const userItemsOnDay = this.getUserItemsOnDay(
-          userTimetables[user_id],
-          firstDayOfWeekMoment.clone().isoWeekday(day),
-          user_id
+        weekItems[dayName] = weekItems[dayName].concat(
+          this.getUserItemsOnDay(userTimetables[user_id], day, user_id)
         );
-        weekItems[day] = weekItems[day].concat(userItemsOnDay);
+        weekItems[dayName] = weekItems[dayName].concat(
+          this.getEventItemsOnDay(weekEvents, day, user_id)
+        );
       }
-      weekItems[day].sort((a, b) => a.start_time.diff(b.start_time));
+
+      weekItems[dayName].sort((a, b) => a.start_time.diff(b.start_time));
       // Make sure each item has a unique id
-      for (let i = 0; i < weekItems[day].length; i++) {
-        weekItems[day][i].id = i;
+      for (let i = 0; i < weekItems[dayName].length; i++) {
+        weekItems[dayName][i].id = i;
       }
     }
 
     let weekTimelineData = {};
-    for (const day of days) {
-      weekTimelineData[day] = {
+    for (const day of dayMoments) {
+      const dayName = day.format("dddd");
+      weekTimelineData[dayName] = {
         groups: timeGroups,
-        items: weekItems[day],
-        dayMoment: firstDayOfWeekMoment.clone().isoWeekday(day)
+        items: weekItems[dayName],
+        dayMoment: day
       };
     }
 
@@ -126,6 +147,26 @@ class GroupTimeline extends React.Component {
       }
     }
     return items;
+  };
+
+  getEventItemsOnDay = (events, dayMoment, id) => {
+    const dayEvents = events.filter(e => {
+      return (
+        moment(e.start_timestamp).isSame(dayMoment, "day") ||
+        moment(e.end_timestamp).isSame(dayMoment, "day")
+      );
+    });
+    let i = 1;
+    const dayEventItems = dayEvents.map(e => {
+      return {
+        id: i++,
+        group: id,
+        title: e.title,
+        start_time: moment(e.start_timestamp),
+        end_time: moment(e.end_timestamp)
+      };
+    });
+    return dayEventItems;
   };
 
   render() {
@@ -205,13 +246,19 @@ class GroupTimeline extends React.Component {
       defaultTimeEnd: maxTime,
       onTimeChange: (visibleTimeStart, visibleTimeEnd, updateScrollCanvas) => {
         if (visibleTimeStart < minTime && visibleTimeEnd > maxTime) {
-          updateScrollCanvas(minTime, maxTime)
+          updateScrollCanvas(minTime, maxTime);
         } else if (visibleTimeStart < minTime) {
-          updateScrollCanvas(minTime, minTime + (visibleTimeEnd - visibleTimeStart))
+          updateScrollCanvas(
+            minTime,
+            minTime + (visibleTimeEnd - visibleTimeStart)
+          );
         } else if (visibleTimeEnd > maxTime) {
-          updateScrollCanvas(maxTime - (visibleTimeEnd - visibleTimeStart), maxTime)
+          updateScrollCanvas(
+            maxTime - (visibleTimeEnd - visibleTimeStart),
+            maxTime
+          );
         } else {
-          updateScrollCanvas(visibleTimeStart, visibleTimeEnd)
+          updateScrollCanvas(visibleTimeStart, visibleTimeEnd);
         }
       }
     };

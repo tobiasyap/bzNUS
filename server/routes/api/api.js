@@ -490,4 +490,14 @@ router.delete("/todos/:todoid", async (req, res) => {
   }
 });
 
+router.delete("/events/:eventid", async (req, res) => {
+  try {
+    await Event.remove(Number(req.params.eventid));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting event.");
+    return;
+  }
+});
+
 module.exports = router;

@@ -112,7 +112,10 @@ export default class GroupPage extends React.Component {
                 </h3>
               </Col>
             </Row>
-            <GroupTimeline users={this.state.groupUsers} />
+            <GroupTimeline 
+              users={this.state.groupUsers}
+              events={group.events} 
+            />
           </TabPane>
           <TabPane tabId="2">
             <EventPane
