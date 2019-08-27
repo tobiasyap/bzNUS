@@ -11,6 +11,7 @@ import {
   FormText,
   FormFeedback
 } from "reactstrap";
+import Container from "@material-ui/core/Container";
 
 class ProfilePage extends React.Component {
   constructor(props) {
@@ -90,58 +91,64 @@ class ProfilePage extends React.Component {
   render() {
     return (
       <div>
-        <Form onSubmit={this.onSubmit}>
-          <FormGroup row>
-            <Label for="formEmail" sm={2}>
-              Email
-            </Label>
-            <Col sm={10}>
-              <Input
-                type="email"
-                name="email"
-                id="formEmail"
-                placeholder="Your email"
-                value={this.state.email}
-                valid={this.state.validate.emailState === "ok"}
-                invalid={this.state.validate.emailState === "bad"}
-                onChange={e => {
-                  this.validateEmail(e);
-                  this.handleChange(e);
-                }}
-              />
-              <FormFeedback invalid>
-                That doesn't look like a valid email.
-              </FormFeedback>
-            </Col>
-          </FormGroup>
-          <FormGroup row>
-            <Label for="formUsername" sm={2}>
-              Username
-            </Label>
-            <Col sm={10}>
-              <Input
-                type="text"
-                name="username"
-                id="formUsername"
-                placeholder={"Enter a username so your groupmates can add you"}
-                value={this.state.username}
-                invalid={this.state.validate.usernameState === "bad"}
-                onChange={e => {
-                  const { validate } = this.state;
-                  validate.usernameState = ""; // Reset invalid state
-                  this.setState({ validate });
-                  this.handleChange(e);
-                }}
-              />
-              <FormFeedback invalid>Username already in use.</FormFeedback>
-            </Col>
-          </FormGroup>
-          <Button>Save</Button>
-        </Form>
-        <p> </p>
-        <Button tag={Link} to="/nusmods">
-          Sync with NUSMods
-        </Button>
+        <Container maxWidth="lg">
+          <br />
+          <h3>Edit Profile</h3>
+          <Form onSubmit={this.onSubmit}>
+            <FormGroup row>
+              <Label for="formEmail" sm={2}>
+                Email
+              </Label>
+              <Col sm={10}>
+                <Input
+                  type="email"
+                  name="email"
+                  id="formEmail"
+                  placeholder="Your email"
+                  value={this.state.email}
+                  valid={this.state.validate.emailState === "ok"}
+                  invalid={this.state.validate.emailState === "bad"}
+                  onChange={e => {
+                    this.validateEmail(e);
+                    this.handleChange(e);
+                  }}
+                />
+                <FormFeedback invalid>
+                  That doesn't look like a valid email.
+                </FormFeedback>
+              </Col>
+            </FormGroup>
+            <FormGroup row>
+              <Label for="formUsername" sm={2}>
+                Username
+              </Label>
+              <Col sm={10}>
+                <Input
+                  type="text"
+                  name="username"
+                  id="formUsername"
+                  placeholder={
+                    "Enter a username so your groupmates can add you"
+                  }
+                  value={this.state.username}
+                  invalid={this.state.validate.usernameState === "bad"}
+                  onChange={e => {
+                    const { validate } = this.state;
+                    validate.usernameState = ""; // Reset invalid state
+                    this.setState({ validate });
+                    this.handleChange(e);
+                  }}
+                />
+                <FormFeedback invalid>Username already in use.</FormFeedback>
+              </Col>
+            </FormGroup>
+            <Button>Save</Button>
+          </Form>
+          <p> </p>
+          <Button tag={Link} to="/nusmods">
+            Sync with NUSMods
+          </Button>
+        </Container>
       </div>
     );
   }

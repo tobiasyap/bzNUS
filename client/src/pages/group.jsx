@@ -21,6 +21,7 @@ import EventPane from "../components/EventPane";
 import TodoPane from "../components/TodoPane";
 import MemberList from "../components/MemberList";
 import UserAddForm from "../components/UserAddForm";
+import HomePane from "../components/HomePane";
 
 export default class GroupPage extends React.Component {
   constructor(props) {
@@ -105,17 +106,10 @@ export default class GroupPage extends React.Component {
         </Nav>
         <TabContent activeTab={this.state.activeTab}>
           <TabPane tabId="1">
-            <Row>
-              <Col sm="12">
-                <h3>
-                  Welcome to the <Badge color="secondary">{group.name}</Badge>{" "}
-                  Home Page
-                </h3>
-              </Col>
-            </Row>
-            <GroupTimeline
+            <HomePane
+              group={group}
               users={this.state.groupUsers}
-              events={group.events}
+              onEventUpdate={() => this.props.onGroupUpdate(group.group_id)}
             />
           </TabPane>
           <TabPane tabId="2">

@@ -17,7 +17,8 @@ class GroupTimeline extends React.Component {
   }
   static propTypes = {
     users: PropTypes.array.isRequired,
-    events: PropTypes.array.isRequired
+    events: PropTypes.array.isRequired,
+    onEventClick: PropTypes.func
   };
 
   componentDidMount() {
@@ -72,7 +73,7 @@ class GroupTimeline extends React.Component {
       weekItems[dayName].sort((a, b) => a.start_time.diff(b.start_time));
       // Make sure each item has a unique id
       for (let i = 0; i < weekItems[dayName].length; i++) {
-        weekItems[dayName][i].id = i;
+        weekItems[dayName][i].id = i+1; // ids start from 1
       }
     }
 
@@ -141,7 +142,7 @@ class GroupTimeline extends React.Component {
           group: id,
           title: `${modName} ${lesson.lessonType}`,
           start_time: dayMoment.clone().add(lesson.startTime / 100, "hours"),
-          end_time: dayMoment.clone().add(lesson.endTime / 100, "hours")
+          end_time: dayMoment.clone().add(lesson.endTime / 100, "hours"),
         });
         i++;
       }
@@ -163,7 +164,8 @@ class GroupTimeline extends React.Component {
         group: id,
         title: e.title,
         start_time: moment(e.start_timestamp),
-        end_time: moment(e.end_timestamp)
+        end_time: moment(e.end_timestamp),
+        _event_id: e.event_id,
       };
     });
     return dayEventItems;
@@ -242,6 +244,7 @@ class GroupTimeline extends React.Component {
     return {
       groups: weekTimelineData[day].groups,
       items: weekTimelineData[day].items,
+      canMove: false,
       defaultTimeStart: minTime,
       defaultTimeEnd: maxTime,
       onTimeChange: (visibleTimeStart, visibleTimeEnd, updateScrollCanvas) => {
@@ -260,7 +263,9 @@ class GroupTimeline extends React.Component {
         } else {
           updateScrollCanvas(visibleTimeStart, visibleTimeEnd);
         }
-      }
+      },
+      onItemSelect: (itemId, e, time) => this.onItemClick(itemId, e, time, day),
+      onItemClick: (itemId, e, time) => this.onItemClick(itemId, e, time, day),
     };
   };
 
@@ -315,6 +320,10 @@ class GroupTimeline extends React.Component {
       startHour,
       endHour
     };
+  };
+
+  onItemClick = (itemId, e, time, day) => {
+    this.props.onEventClick(this.state.weekTimelineData[day].items[itemId-1]._event_id);
   };
 }
 
