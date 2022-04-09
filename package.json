@@ -33,7 +33,7 @@
     "create-react-app": "^3.0.1",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "passport": "^0.4.0",
     "passport-nus-openid": "0.0.3",
     "passport-openid": "^0.4.0",
